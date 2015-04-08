@@ -9,6 +9,19 @@ cabal build
 
 ## Usage
 
+The objects supported by DataFlow is:
+
+* `TrustBoundary`
+* `External`
+* `Process`
+* `Edge`
+
+These are composed in a `Diagram` to get something printable.
+
+For more information see the [Hackage site](https://hackage.haskell.org/package/dataflow).
+
+## Example
+
 ```haskell
 module Main where
 
