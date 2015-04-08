@@ -1,15 +1,3 @@
-# DataFlow
-
-Generate Graphviz documents from a Haskell representation.
-
-```
-cabal configure
-cabal build
-```
-
-## Usage
-
-```haskell
 module Main where
 
 import DataFlow.Core
@@ -33,15 +21,3 @@ main = printDfd $
 
     Edge "webapp" "analytics" "Log" "Page Navigation"
   ]
-```
-
-Then generate your output with dot.
-
-```bash
-runhaskell example.hs | dot -Tsvg > output.svg
-```
-
-That should generate something like the following.
-
-![Example Output](examples/output.svg)
-
