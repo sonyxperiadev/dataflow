@@ -20,7 +20,9 @@ instance DFD Object where
     withIndent $ do
       mapM_ dfd objects
       blank
-      label $ bold $ write name
+      writeln "fontsize = 10;"
+      writeln "fontcolor = gray25;"
+      label $ write name
       writeln "graph[style = dashed];"
     writeln "}"
 
