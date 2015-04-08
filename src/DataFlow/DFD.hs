@@ -9,7 +9,7 @@ class DFD t where
   dfd :: t -> Gen ()
 
 instance DFD Object where
-  dfd (Client id' name) = objectWith brackets id' $ do
+  dfd (External id' name) = objectWith brackets id' $ do
     write "shape = square;"
     write "style = bold;"
     label $ bold $ write name

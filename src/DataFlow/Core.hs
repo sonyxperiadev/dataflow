@@ -12,7 +12,7 @@ type Description = String
 data Diagram = Diagram Name [Object]
 
 -- | An object in a diagram.
-data Object = Client ID Name
+data Object = External ID Name
             | TrustBoundary ID Name [Object]
             | Process ID Name
             | Database ID Name
