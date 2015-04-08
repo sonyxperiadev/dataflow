@@ -43,5 +43,5 @@ runhaskell example.hs | dot -Tsvg > output.svg
 
 That should generate something like the following.
 
-![Example Output](example/output.svg)
+![Example Output](https://raw.githubusercontent.com/owickstrom/dataflow/master/example/output.svg)
 
