@@ -19,31 +19,41 @@ data Object = External ID Name
             | Edge ID ID Operation Description deriving (Show, Eq)
 
 type Indent = Int
+type IndentNext = Bool
 type Step = Int
-data GenState = GenState Indent Step
+data GenState = GenState Indent IndentNext Step
 
 -- | The monad stack for generating output based on Diagram.
 type Gen t = WriterT [String] (State GenState) t
 
 write :: String -> Gen ()
 write s = do
-  (GenState n _) <- lift get
-  tell [replicate n ' ' ++ s]
+  (GenState n indentNext step) <- lift get
+  if indentNext
+    then tell [replicate n ' ' ++ s]
+    else tell [s]
+  put $ GenState n False step
+
+writeln :: String -> Gen ()
+writeln s = do
+  write s
+  write "\n"
+  modify $ \(GenState n _ s') -> GenState n True s'
 
 incrStep :: Gen ()
-incrStep = modify $ \(GenState n s') -> GenState n (s' + 1)
+incrStep = modify $ \(GenState n indentNext s') -> GenState n indentNext (s' + 1)
 
 nextStep :: Gen Int
 nextStep = do
   incrStep
-  (GenState _ s) <- lift get
+  (GenState _ _ s) <- lift get
   return s
 
 indent :: Gen ()
-indent = modify $ \(GenState n s) -> GenState (n + 2) s
+indent = modify $ \(GenState n indentNext s) -> GenState (n + 2) indentNext s
 
 dedent :: Gen ()
-dedent = modify $ \(GenState n s) -> GenState (n - 2) s
+dedent = modify $ \(GenState n indentNext s) -> GenState (n - 2) indentNext s
 
 withIndent :: Gen () -> Gen ()
 withIndent gen = do
@@ -57,13 +67,13 @@ blank = tell [""]
 label :: Gen () -> Gen ()
 label contents = do
   write "label = <"
-  withIndent contents
-  write ">;"
+  contents
+  writeln ">;"
 
 tag :: String -> String -> Gen () -> Gen ()
 tag t attrs contents = do
   write $ "<" ++ t ++ (if null attrs then "" else " " ++ attrs) ++ ">"
-  withIndent contents
+  contents
   write $ "</" ++ t ++ ">"
 
 bold :: Gen () -> Gen ()
@@ -86,10 +96,10 @@ curlyBrackets = ('{', '}')
 objectWith :: Enclosing -> ID -> Gen () -> Gen ()
 objectWith (before, after) id' attributes = do
   blank
-  write $ id' ++ " " ++ [before]
+  writeln $ id' ++ " " ++ [before]
   withIndent attributes
-  write [after]
+  writeln [after]
 
 useFont :: ID -> String -> Gen ()
-useFont id' font = objectWith brackets id' $ write $ "fontname = \"" ++ font ++ "\";"
+useFont id' font = objectWith brackets id' $ writeln $ "fontname = \"" ++ font ++ "\";"
 

@@ -10,22 +10,22 @@ class DFD t where
 
 instance DFD Object where
   dfd (External id' name) = objectWith brackets id' $ do
-    write "shape = square;"
-    write "style = bold;"
+    writeln "shape = square;"
+    writeln "style = bold;"
     label $ bold $ write name
 
   dfd (TrustBoundary id' name objects) = do
     blank
-    write $ "subgraph cluster_" ++ id' ++ " {"
+    writeln $ "subgraph cluster_" ++ id' ++ " {"
     withIndent $ do
       mapM_ dfd objects
       blank
-      write $ "label = <<b>" ++ name ++ "</b>>;"
-      write "graph[style = dashed];"
-    write "}"
+      label $ bold $ write name
+      writeln "graph[style = dashed];"
+    writeln "}"
 
   dfd (Process id' name) = objectWith brackets id' $ do
-    write "shape = circle;"
+    writeln "shape = circle;"
     label $ bold $ write name
 
   dfd (Database id' name) = objectWith brackets id' $ do
@@ -34,40 +34,40 @@ instance DFD Object where
         tr $
           td $
             bold $ write name
-    write "shape = none;"
+    writeln "shape = none;"
 
   dfd (Edge i1 i2 operation description) = do
     step <- nextStep
     blank
-    write $ i1 ++ " -> " ++ i2 ++ " ["
+    writeln $ i1 ++ " -> " ++ i2 ++ " ["
     withIndent $
       label $ do
         bold $ write $ "(" ++ show step ++ ") " ++ operation
         write "<br/>"
         write description
-    write "]"
+    writeln "]"
 
 instance DFD Diagram where
   dfd (Diagram title objects) = do
-    write $ "digraph \"" ++ title ++ "\" {"
+    writeln $ "digraph \"" ++ title ++ "\" {"
     withIndent $ do
       useFont "graph" "sans-serif"
       useFont "node" "sans-serif"
       useFont "edge" "sans-serif"
       blank
 
-      write "labelloc = \"t\";"
+      writeln "labelloc = \"t\";"
       label $ bold $ write title
 
-      write "rankdir = LR;"
+      writeln "rankdir = LR;"
 
       mapM_ dfd objects
 
-    write "}"
+    writeln "}"
 
 -- | Generates the DFD output as a String.
 runDfd :: Diagram -> String
-runDfd diagram = unlines $ evalState (execWriterT (dfd diagram)) (GenState 0 0)
+runDfd diagram = concat $ evalState (execWriterT (dfd diagram)) (GenState 0 False 0)
 
 -- | Prints the DFD output to stdout.
 printDfd :: Diagram -> IO ()
