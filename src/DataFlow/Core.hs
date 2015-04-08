@@ -8,8 +8,10 @@ type Name = String
 type Operation = String
 type Description = String
 
+-- | The top level diagram.
 data Diagram = Diagram Name [Object]
 
+-- | An object in a diagram.
 data Object = Client ID Name
             | TrustBoundary ID Name [Object]
             | Process ID Name
@@ -19,6 +21,8 @@ data Object = Client ID Name
 type Indent = Int
 type Step = Int
 data GenState = GenState Indent Step
+
+-- | The monad stack for generating output based on Diagram.
 type Gen t = WriterT [String] (State GenState) t
 
 write :: String -> Gen ()

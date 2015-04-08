@@ -1,6 +1,6 @@
 # DataFlow
 
-Generate Graphviz documents from a nice Haskell representation.
+Generate Graphviz documents from a Haskell representation.
 
 ```
 cabal configure

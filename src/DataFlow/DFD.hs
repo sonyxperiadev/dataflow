@@ -4,6 +4,10 @@ import Control.Monad.State
 import Control.Monad.Writer
 import DataFlow.Core
 
+-- | Type class for types that can be rendered as DFD.
+class DFD t where
+  dfd :: t -> Gen ()
+
 instance DFD Object where
   dfd (Client id' name) = objectWith brackets id' $ do
     write "shape = square;"
@@ -43,9 +47,6 @@ instance DFD Object where
         write description
     write "]"
 
-class DFD t where
-  dfd :: t -> Gen ()
-
 instance DFD Diagram where
   dfd (Diagram title objects) = do
     write $ "digraph \"" ++ title ++ "\" {"
@@ -64,8 +65,10 @@ instance DFD Diagram where
 
     write "}"
 
+-- | Generates the DFD output as a String.
 runDfd :: Diagram -> String
 runDfd diagram = unlines $ evalState (execWriterT (dfd diagram)) (GenState 0 0)
 
+-- | Prints the DFD output to stdout.
 printDfd :: Diagram -> IO ()
 printDfd = putStr . runDfd
