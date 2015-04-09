@@ -21,9 +21,9 @@ instance DFD Object where
       mapM_ dfd objects
       blank
       writeln "fontsize = 10;"
-      writeln "fontcolor = gray25;"
+      writeln "fontcolor = grey30;"
       label $ write name
-      writeln "graph[style = dashed];"
+      writeln "graph[style = dashed, color=grey30];"
     writeln "}"
 
   dfd (Process id' name) = objectWith brackets id' $ do
@@ -53,14 +53,16 @@ instance DFD Diagram where
   dfd (Diagram title objects) = do
     writeln $ "digraph \"" ++ title ++ "\" {"
     withIndent $ do
-      useFont "graph" "sans-serif"
-      useFont "node" "sans-serif"
-      useFont "edge" "sans-serif"
+      attrs "graph" "fontname=\"sans-serif\""
+      attrs "node" "fontname=\"sans-serif\""
+      attrs "edge" "fontname=\"sans-serif\", fontsize=12"
       blank
 
       writeln "labelloc = \"t\";"
       label $ bold $ write title
+      writeln "fontsize = 20;"
 
+      writeln "nodesep = 1;"
       writeln "rankdir = LR;"
 
       mapM_ dfd objects

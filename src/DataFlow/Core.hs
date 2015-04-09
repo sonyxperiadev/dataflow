@@ -71,8 +71,8 @@ label contents = do
   writeln ">;"
 
 tag :: String -> String -> Gen () -> Gen ()
-tag t attrs contents = do
-  write $ "<" ++ t ++ (if null attrs then "" else " " ++ attrs) ++ ">"
+tag t a contents = do
+  write $ "<" ++ t ++ (if null a then "" else " " ++ a) ++ ">"
   contents
   write $ "</" ++ t ++ ">"
 
@@ -100,6 +100,6 @@ objectWith (before, after) id' attributes = do
   withIndent attributes
   writeln [after]
 
-useFont :: ID -> String -> Gen ()
-useFont id' font = objectWith brackets id' $ writeln $ "fontname = \"" ++ font ++ "\";"
+attrs :: ID -> String -> Gen ()
+attrs id' = objectWith brackets id' . writeln
 
