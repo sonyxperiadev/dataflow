@@ -9,6 +9,8 @@ cabal build
 
 ## Usage
 
+![Legend](https://rawgit.com/owickstrom/dataflow/master/example/legend.svg)
+
 The objects supported by DataFlow is:
 
 * `TrustBoundary`
@@ -56,5 +58,11 @@ runhaskell example.hs | dot -Tsvg > output.svg
 
 That should generate something like the following.
 
-![Example Output](https://rawgit.com/owickstrom/dataflow/master/example/output.svg)
+![Example Output](https://rawgit.com/owickstrom/dataflow/master/example/example.svg)
 
+## Building the Examples
+
+```bash
+cabal install
+make -C example
+```
