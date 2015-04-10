@@ -71,7 +71,7 @@ instance DFD Diagram where
 
 -- | Generates the DFD output as a String.
 runDfd :: Diagram -> String
-runDfd diagram = concat $ evalState (execWriterT (dfd diagram)) (GenState 0 False 0)
+runDfd diagram = evalDiagram (dfd diagram)
 
 -- | Prints the DFD output to stdout.
 printDfd :: Diagram -> IO ()
