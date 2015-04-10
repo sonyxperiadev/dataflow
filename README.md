@@ -53,7 +53,7 @@ main = printDfd $
 Then generate your output with dot.
 
 ```bash
-runhaskell example.hs | dot -Tsvg > output.svg
+runhaskell example.hs | dot -Tsvg > example.svg
 ```
 
 That should generate something like the following.
