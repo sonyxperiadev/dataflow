@@ -1,7 +1,5 @@
 module DataFlow.DFD where
 
-import Control.Monad.State
-import Control.Monad.Writer
 import DataFlow.Core
 
 -- | Type class for types that can be rendered as DFD.
@@ -9,7 +7,7 @@ class DFD t where
   dfd :: t -> Gen ()
 
 instance DFD Object where
-  dfd (External id' name) = objectWith brackets id' $ do
+  dfd (External id' name) = objectWith Brackets id' $ do
     writeln "shape = square;"
     writeln "style = bold;"
     label $ bold $ write name
@@ -26,11 +24,11 @@ instance DFD Object where
       writeln "graph[style = dashed, color=grey30];"
     writeln "}"
 
-  dfd (Process id' name) = objectWith brackets id' $ do
+  dfd (Process id' name) = objectWith Brackets id' $ do
     writeln "shape = circle;"
     label $ bold $ write name
 
-  dfd (Database id' name) = objectWith brackets id' $ do
+  dfd (Database id' name) = objectWith Brackets id' $ do
     label $
       table "sides=\"TB\" cellborder=\"0\"" $
         tr $
@@ -70,9 +68,9 @@ instance DFD Diagram where
     writeln "}"
 
 -- | Generates the DFD output as a String.
-runDfd :: Diagram -> String
-runDfd diagram = evalDiagram (dfd diagram)
+evalDfd :: Diagram -> String
+evalDfd = evalDiagram . dfd
 
 -- | Prints the DFD output to stdout.
 printDfd :: Diagram -> IO ()
-printDfd = putStr . runDfd
+printDfd = putStr . evalDfd

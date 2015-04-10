@@ -1,5 +1,5 @@
 name:                dataflow
-version:             0.3.2.0
+version:             0.4.0.0
 synopsis:            Generate Graphviz documents from a Haskell representation.
 description:         Outputs .dot files that can be processed by the dot
                      command. Currently it only supports the DFD output format

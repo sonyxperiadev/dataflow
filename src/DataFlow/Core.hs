@@ -20,9 +20,7 @@ module DataFlow.Core (
   table,
   tr,
   td,
-  Enclosing,
-  brackets,
-  curlyBrackets,
+  Enclosing(..),
   objectWith,
   attrs
   ) where
@@ -141,26 +139,23 @@ tr = tag "tr" ""
 td :: Gen () -> Gen ()
 td = tag "td" ""
 
--- | A pair of enclosing characters in a block.
-type Enclosing = (Char, Char)
-
--- | \"[\" and \"]\"
-brackets :: Enclosing
-brackets = ('[', ']')
-
--- | \"{\" and \"}\"
-curlyBrackets :: Enclosing
-curlyBrackets = ('{', '}')
+-- | The enclosing characters in a block.
+data Enclosing = Brackets | CurlyBrackets
 
 -- | Write an object with the given 'Enclosing' characters, 'ID' and 'Gen' as
 --   its contents.
 objectWith :: Enclosing -> ID -> Gen () -> Gen ()
-objectWith (before, after) id' attributes = do
-  blank
-  writeln $ id' ++ " " ++ [before]
-  withIndent attributes
-  writeln [after]
+objectWith enc id' attributes =
+  do
+    blank
+    writeln $ id' ++ " " ++ before enc
+    withIndent attributes
+    writeln $ after enc
+  where before Brackets = "["
+        before CurlyBrackets = "{"
+        after Brackets = "]"
+        after CurlyBrackets = "}"
 
 -- | Write an attributes declaration for the given 'ID'.
 attrs :: ID -> String -> Gen ()
-attrs id' = objectWith brackets id' . writeln
+attrs id' = objectWith Brackets id' . writeln
