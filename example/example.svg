@@ -10,13 +10,13 @@
 <title>My Diagram</title>
 <polygon fill="white" stroke="none" points="-4,4 -4,-378.145 498.137,-378.145 498.137,4 -4,4"/>
 <text text-anchor="start" x="193.172" y="-355.145" font-family="sans-serif" font-weight="bold" font-size="20.00">My Diagram</text>
-<g id="clust1" class="cluster"><title>cluster_browser</title>
-<polygon fill="none" stroke="#4d4d4d" stroke-dasharray="5,2" points="8,-110.145 8,-230.145 109.78,-230.145 109.78,-110.145 8,-110.145"/>
-<text text-anchor="start" x="40.5524" y="-218.145" font-family="sans-serif" font-size="10.00" fill="#4d4d4d">Browser</text>
-</g>
 <g id="clust2" class="cluster"><title>cluster_aws</title>
 <polygon fill="none" stroke="#4d4d4d" stroke-dasharray="5,2" points="221.346,-190.145 221.346,-338.145 486.137,-338.145 486.137,-190.145 221.346,-190.145"/>
 <text text-anchor="start" x="323.078" y="-326.145" font-family="sans-serif" font-size="10.00" fill="#4d4d4d">Amazon AWS</text>
+</g>
+<g id="clust1" class="cluster"><title>cluster_browser</title>
+<polygon fill="none" stroke="#4d4d4d" stroke-dasharray="5,2" points="8,-110.145 8,-230.145 109.78,-230.145 109.78,-110.145 8,-110.145"/>
+<text text-anchor="start" x="40.5524" y="-218.145" font-family="sans-serif" font-size="10.00" fill="#4d4d4d">Browser</text>
 </g>
 <!-- webapp -->
 <g id="node1" class="node"><title>webapp</title>
@@ -32,7 +32,7 @@
 <g id="edge1" class="edge"><title>webapp&#45;&gt;server</title>
 <path fill="none" stroke="black" d="M98.8414,-177.411C133.323,-191.81 184.216,-213.063 224.076,-229.709"/>
 <polygon fill="black" stroke="black" points="222.86,-232.994 233.436,-233.618 225.557,-226.534 222.86,-232.994"/>
-<text text-anchor="middle" x="163.81" y="-224.545" font-family="sans-serif" font-size="12.00">webappserver&#45;&gt;</text>
+<text text-anchor="start" x="129.128" y="-225.545" font-family="sans-serif" font-weight="bold" font-size="12.00">(1) Request /</text>
 </g>
 <!-- analytics -->
 <g id="node4" class="node"><title>analytics</title>

@@ -7,4 +7,7 @@ TARGETS=$(SOURCES:%.hs=%.svg)
 
 svg: $(TARGETS)
 
+clean:
+	rm $(TARGETS)
+
 all: svg

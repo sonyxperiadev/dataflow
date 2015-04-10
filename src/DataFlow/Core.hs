@@ -5,7 +5,7 @@ module DataFlow.Core (
   Description,
   Diagram(..),
   Object(..),
-  Gen,
+  Renderer,
   evalDiagram,
   write,
   writeln,
@@ -56,97 +56,97 @@ data Object =
 type Indent = Int
 type IndentNext = Bool
 type Step = Int
-data GenState = GenState Indent IndentNext Step
+data RendererState = RendererState Indent IndentNext Step
 
--- | The Gen represents some output generator that runs on a 'Diagram'..
-type Gen t = WriterT [String] (State GenState) t
+-- | The Renderer represents some output generator that runs on a 'Diagram'.
+type Renderer t = WriterT [String] (State RendererState) t
 
--- | Run the 'Gen' and get the output as a 'String'.
-evalDiagram :: Gen () -> String
-evalDiagram g = concat $ evalState (execWriterT g) (GenState 0 False 0)
+-- | Run the 'Renderer' and get the output as a 'String'.
+evalDiagram :: Renderer () -> String
+evalDiagram g = concat $ evalState (execWriterT g) (RendererState 0 False 0)
 
 -- | Write a string to the output (no linefeed).
-write :: String -> Gen ()
+write :: String -> Renderer ()
 write s = do
-  (GenState n indentNext step) <- lift get
+  (RendererState n indentNext step) <- lift get
   if indentNext
     then tell [replicate n ' ' ++ s]
     else tell [s]
-  put $ GenState n False step
+  put $ RendererState n False step
 
 -- | Write a string to the output (with linefeed).
-writeln :: String -> Gen ()
+writeln :: String -> Renderer ()
 writeln s = do
   write s
   write "\n"
-  modify $ \(GenState n _ s') -> GenState n True s'
+  modify $ \(RendererState n _ s') -> RendererState n True s'
 
-incrStep :: Gen ()
-incrStep = modify $ \(GenState n indentNext s') -> GenState n indentNext (s' + 1)
+incrStep :: Renderer ()
+incrStep = modify $ \(RendererState n indentNext s') -> RendererState n indentNext (s' + 1)
 
 -- | Get the next \"step\" number (the order of flow arrows in the diagram).
-nextStep :: Gen Int
+nextStep :: Renderer Int
 nextStep = do
   incrStep
-  (GenState _ _ s) <- lift get
+  (RendererState _ _ s) <- lift get
   return s
 
 -- | Increase indent with 2 spaces.
-indent :: Gen ()
-indent = modify $ \(GenState n indentNext s) -> GenState (n + 2) indentNext s
+indent :: Renderer ()
+indent = modify $ \(RendererState n indentNext s) -> RendererState (n + 2) indentNext s
 
 -- | Decrease indent with 2 spaces.
-dedent :: Gen ()
-dedent = modify $ \(GenState n indentNext s) -> GenState (n - 2) indentNext s
+dedent :: Renderer ()
+dedent = modify $ \(RendererState n indentNext s) -> RendererState (n - 2) indentNext s
 
 -- | Indent the output of gen with 2 spaces.
-withIndent :: Gen () -> Gen ()
+withIndent :: Renderer () -> Renderer ()
 withIndent gen = do
   indent
   gen
   dedent
 
 -- | Write a blank line.
-blank :: Gen ()
+blank :: Renderer ()
 blank = tell [""]
 
 -- | Write a label with the output of gen as its contents.
-label :: Gen () -> Gen ()
+label :: Renderer () -> Renderer ()
 label contents = do
   write "label = <"
   contents
   writeln ">;"
 
 -- | Write an HTML tag t with the output of gen as its contents.
-tag :: String -> String -> Gen () -> Gen ()
+tag :: String -> String -> Renderer () -> Renderer ()
 tag t a contents = do
   write $ "<" ++ t ++ (if null a then "" else " " ++ a) ++ ">"
   contents
   write $ "</" ++ t ++ ">"
 
--- | Write a \<b\> tag surrounding the output of another 'Gen'.
-bold :: Gen () -> Gen ()
+-- | Write a \<b\> tag surrounding the output of another 'Renderer'.
+bold :: Renderer () -> Renderer ()
 bold = tag "b" ""
 
 -- | Write a \<table\> tag, with attributes, surrounding the output of
---   another 'Gen'.
-table :: String -> Gen () -> Gen ()
+--   another 'Renderer'.
+table :: String -> Renderer () -> Renderer ()
 table = tag "table"
 
--- | Write a \<tr\> tag surrounding the output of another 'Gen'.
-tr :: Gen () -> Gen ()
+-- | Write a \<tr\> tag surrounding the output of another 'Renderer'.
+tr :: Renderer () -> Renderer ()
 tr = tag "tr" ""
 
--- | Write a \<td\> tag surrounding the output of another 'Gen'.
-td :: Gen () -> Gen ()
+-- | Write a \<td\> tag surrounding the output of another 'Renderer'.
+td :: Renderer () -> Renderer ()
 td = tag "td" ""
 
 -- | The enclosing characters in a block.
 data Enclosing = Brackets | CurlyBrackets
 
--- | Write an object with the given 'Enclosing' characters, 'ID' and 'Gen' as
+-- | Write an object with the given 'Enclosing' characters, 'ID' and 'Renderer' as
 --   its contents.
-objectWith :: Enclosing -> ID -> Gen () -> Gen ()
+objectWith :: Enclosing -> ID -> Renderer () -> Renderer ()
 objectWith enc id' attributes =
   do
     blank
@@ -159,5 +159,5 @@ objectWith enc id' attributes =
         after CurlyBrackets = "}"
 
 -- | Write an attributes declaration for the given 'ID'.
-attrs :: ID -> String -> Gen ()
+attrs :: ID -> String -> Renderer ()
 attrs id' = objectWith Brackets id' . writeln
