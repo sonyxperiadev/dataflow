@@ -7,7 +7,7 @@ class DFD t where
   dfd :: t -> Gen ()
 
 instance DFD Object where
-  dfd (External id' name) = objectWith Brackets id' $ do
+  dfd (InputOutput id' name) = objectWith Brackets id' $ do
     writeln "shape = square;"
     writeln "style = bold;"
     label $ bold $ write name
@@ -24,7 +24,7 @@ instance DFD Object where
       writeln "graph[style = dashed, color=grey30];"
     writeln "}"
 
-  dfd (Process id' name) = objectWith Brackets id' $ do
+  dfd (Function id' name) = objectWith Brackets id' $ do
     writeln "shape = circle;"
     label $ bold $ write name
 
@@ -36,7 +36,7 @@ instance DFD Object where
             bold $ write name
     writeln "shape = none;"
 
-  dfd (Edge i1 i2 operation description) = do
+  dfd (Flow i1 i2 operation description) = do
     step <- nextStep
     blank
     writeln $ i1 ++ " -> " ++ i2 ++ " ["

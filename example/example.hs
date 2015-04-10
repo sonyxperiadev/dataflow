@@ -7,17 +7,17 @@ main :: IO ()
 main = printDfd $
   Diagram "My Diagram" [
     TrustBoundary "browser" "Browser" [
-      Process "webapp" "Webapp"
+      Function "webapp" "Webapp"
     ],
     TrustBoundary "aws" "Amazon AWS" [
-      Process "server" "Web Server",
+      Function "server" "Web Server",
       Database "logs" "Logs"
     ],
-    External "analytics" "Google Analytics",
+    InputOutput "analytics" "Google Analytics",
 
-    Edge "webapp" "server" "Request /" "",
-    Edge "server" "logs" "Log" "User IP",
-    Edge "server" "webapp" "Response" "User Profile",
+    Flow "webapp" "server" "Request /" "",
+    Flow "server" "logs" "Log" "User IP",
+    Flow "server" "webapp" "Response" "User Profile",
 
-    Edge "webapp" "analytics" "Log" "Page Navigation"
+    Flow "webapp" "analytics" "Log" "Page Navigation"
   ]

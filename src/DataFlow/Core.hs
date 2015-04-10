@@ -41,15 +41,17 @@ type Description = String
 data Diagram = Diagram Name [Object]
 
 -- | An object in a diagram.
-data Object = External ID Name
+data Object =
+            -- | A "Input" or "Output" in DFD.
+            InputOutput ID Name
             -- | Surrounds other objects, denoting a boundary.
             | TrustBoundary ID Name [Object]
-            -- | A \"Process\" in DFD.
-            | Process ID Name
+            -- | A \"Function\" in DFD.
+            | Function ID Name
             -- | A \"Database\" in DFD.
             | Database ID Name
-            -- | Describes the dataflow between two objects.
-            | Edge ID ID Operation Description deriving (Show, Eq)
+            -- | Describes the flow of data between two objects.
+            | Flow ID ID Operation Description deriving (Show, Eq)
 
 type Indent = Int
 type IndentNext = Bool
