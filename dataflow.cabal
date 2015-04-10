@@ -1,11 +1,12 @@
 name:                dataflow
-version:             0.4.0.0
+version:             0.4.1.0
 synopsis:            Generate Graphviz documents from a Haskell representation.
 description:         Outputs .dot files that can be processed by the dot
                      command. Currently it only supports the DFD output format
                      (http://en.wikipedia.org/wiki/Data_flow_diagram). Support
                      for a Graphviz-like input format (instead of using the
                      data structures in Haskell) is planned.
+homepage:            https://github.com/owickstrom/dataflow
 license:             MIT
 license-file:        LICENSE
 author:              Oskar Wickström
@@ -17,8 +18,14 @@ build-type:          Simple
 extra-source-files:  README.md,
                      LICENSE,
                      example/example.hs,
-                     example/output.svg
+                     example/example.svg,
+                     example/legend.hs,
+                     example/legend.svg
 cabal-version:       >=1.10
+
+source-repository head
+  type: git
+  location: git@github.com:owickstrom/dataflow.git
 
 library
   exposed-modules:

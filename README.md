@@ -66,3 +66,9 @@ That should generate something like the following.
 cabal install
 make -C example
 ```
+
+## Release
+
+```bash
+cabal clean && cabal build && cabal sdist && cabal upload dist/dataflow-*.tar.gz
+```
