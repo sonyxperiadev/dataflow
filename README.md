@@ -16,11 +16,12 @@ The objects supported by DataFlow is:
 * `TrustBoundary`
 * `InputOutput`
 * `Function`
+* `Database`
 * `Flow`
 
 These are composed in a `Diagram` to get something printable.
 
-For more information see the [Hackage site](https://hackage.haskell.org/package/dataflow).
+For more on Haskell data types, see [the Hackage site](https://hackage.haskell.org/package/dataflow).
 
 ## Example
 
