@@ -1,124 +1,67 @@
 module DataFlow.DFD where
 
-import Control.Monad.Identity
-import Control.Monad.State
-import Data.Map (Map)
-import qualified Data.Map as Map
-import DataFlow.Core
+import Text.Printf
+import qualified DataFlow.Core as C
+import DataFlow.Graphviz
+import DataFlow.Graphviz.EdgeNormalization
 
-type DFDState v = State (Map (ID, ID) Bool) v
-type DFDRenderer t = DFDState (Renderer t)
+inQuotes :: String -> String
+inQuotes s = "\"" ++ s ++ "\""
 
--- | Type class for types that can be rendered as DFD.
-class RenderDFD t where
-  dfd :: t -> DFDRenderer ()
+label :: String -> Attr
+label s = Attr (ID "label") (ID $ "<" ++ s ++ ">")
 
-return' :: t -> DFDRenderer t
-return' v = return . lift . return $ v
+bold :: String -> String
+bold s = "<b>" ++ s ++ "</b>"
 
-exists :: (ID, ID) -> DFDState Bool
-exists k = do
-  m <- get
-  return $ case Map.lookup k m of
-            (Just _) -> True
-            _ -> False
+convertObject :: C.Object -> StmtList
+convertObject (C.InputOutput id' name) = [
+  NodeStmt (ID id') [
+    Attr (ID "shape") (ID "square"),
+    Attr (ID "style") (ID "bold"),
+    label $ bold name
+  ]]
+convertObject (C.TrustBoundary id' name objects) =
+  let sgId = (ID $ "cluster_" ++ id')
+      objectStmts = convertObjects objects
+      sgAttrStmt = AttrStmt Graph [
+        Attr (ID "fontsize") (ID "10"),
+        Attr (ID "fontcolor") (ID "grey30"),
+        Attr (ID "style") (ID "dashed"),
+        Attr (ID "color") (ID "grey30"),
+        label $ bold name]
+      stmts = sgAttrStmt : objectStmts
+  in [SubgraphStmt $ Subgraph sgId stmts]
 
-register :: (ID, ID) -> DFDState ()
-register k = do
-  m <- get
-  put $ Map.insert k True m
-  return ()
+convertObject (C.Function id' name) =
+  [
+    NodeStmt (ID id') [
+      Attr (ID "shape") (ID "circle"),
+      label $ bold name
+    ]
+  ]
+convertObject (C.Database id' name) =
+  [
+    NodeStmt (ID id') [
+      Attr (ID "shape") (ID "none"),
+      label $ printf "<table sides=\"TB\" cellborder=\"0\"><tr><td>%s</td></tr></table>" (bold name)
+    ]
+  ]
+convertObject (C.Flow i1 i2 op desc) =
+  [
+    EdgeStmt (EdgeExpr (IDOperand (NodeID (ID i1) Nothing))
+                       Arrow
+                       (IDOperand (NodeID (ID i2) Nothing))) [
+      Attr (ID "shape") (ID "none"),
+      label $ bold op ++ "<br/>" ++ desc
+    ]
+  ]
 
-shouldInvert :: (ID, ID) -> DFDState Bool
-shouldInvert k@(i1, i2) = do
-  e <- exists k
-  if e
-    then return False
-    else do
-      ie <- exists (i2, i1)
-      if ie
-        then return True
-        else do
-          register k
-          return False
+convertObjects :: [C.Object] -> StmtList
+convertObjects = concat . (map convertObject)
 
-instance RenderDFD Object where
-  dfd (InputOutput id' name) =
-    return $ objectWith Brackets id' $ do
-      writeln "shape = square;"
-      writeln "style = bold;"
-      label $ bold $ write name
-
-  dfd (TrustBoundary id' name objects) = do
-    renderObjects <- mapM dfd objects
-    return $ do
-      blank
-      writeln $ "subgraph cluster_" ++ id' ++ " {"
-      withIndent $ do
-        blank
-        sequence_ renderObjects
-        writeln "fontsize = 10;"
-        writeln "fontcolor = grey30;"
-        label $ write name
-        writeln "graph[style = dashed, color=grey30];"
-      writeln "}"
-
-  dfd (Function id' name) = return $ objectWith Brackets id' $ do
-    writeln "shape = circle;"
-    label $ bold $ write name
-
-  dfd (Database id' name) = return $ objectWith Brackets id' $ do
-    label $
-      table "sides=\"TB\" cellborder=\"0\"" $
-        tr $
-          td $
-            bold $ write name
-    writeln "shape = none;"
-
-  dfd (Flow i1 i2 operation description)= do
-    back <- shouldInvert (i1, i2)
-    return $ do
-      step <- nextStep
-      blank
-      if back
-        then writeln $ i2 ++ " -> " ++ i1 ++ " ["
-        else writeln $ i1 ++ " -> " ++ i2 ++ " ["
-      withIndent $ do
-        when back $
-          writeln "dir = back;"
-        label $ do
-          bold $ write $ "(" ++ show step ++ ") " ++ operation
-          write "<br/>"
-          write description
-      writeln "]"
-
-instance RenderDFD Diagram where
-  dfd (Diagram title objects) =
-    do
-      renderObjects <- mapM dfd objects
-      return $ do
-        writeln $ "digraph \"" ++ title ++ "\" {"
-        withIndent $ do
-          attrs "graph" "fontname=\"sans-serif\""
-          attrs "node" "fontname=\"sans-serif\""
-          attrs "edge" "fontname=\"sans-serif\", fontsize=12"
-          blank
-
-          writeln "labelloc = \"t\";"
-          label $ bold $ write title
-          writeln "fontsize = 20;"
-
-          writeln "nodesep = 1;"
-          writeln "rankdir = LR;"
-
-          sequence_ renderObjects
-
-        writeln "}"
-
--- | Generates the DFD output as a String.
-evalDfd :: Diagram -> String
-evalDfd d = evalDiagram (evalState (dfd d) Map.empty)
-
--- | Prints the DFD output to stdout.
-printDfd :: Diagram -> IO ()
-printDfd = putStr . evalDfd
+asDFD :: C.Diagram -> Graph
+asDFD (C.Diagram (Just name) objects) =
+  normalize $ Digraph (ID $ inQuotes name) (convertObjects objects)
+asDFD (C.Diagram Nothing objects) =
+  normalize $ Digraph (ID $ "Untitled") (convertObjects objects)

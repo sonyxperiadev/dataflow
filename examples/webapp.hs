@@ -1,13 +1,14 @@
 module Main where
 
 import DataFlow.Core
+import DataFlow.Graphviz.Renderer
 import DataFlow.DFD
 
 main :: IO ()
-main = printDfd $
-  Diagram "My Diagram" [
+main = putStr $ renderGraphviz $ asDFD  $
+  Diagram (Just "Webapp") [
     TrustBoundary "browser" "Browser" [
-      Function "webapp" "Webapp"
+      Function "client" "Client"
     ],
     TrustBoundary "aws" "Amazon AWS" [
       Function "server" "Web Server",
@@ -15,9 +16,9 @@ main = printDfd $
     ],
     InputOutput "analytics" "Google Analytics",
 
-    Flow "webapp" "server" "Request /" "",
+    Flow "client" "server" "Request /" "",
     Flow "server" "logs" "Log" "User IP",
-    Flow "server" "webapp" "Response" "User Profile",
+    Flow "server" "client" "Response" "User Profile",
 
-    Flow "webapp" "analytics" "Log" "Page Navigation"
+    Flow "client" "analytics" "Log" "Page Navigation"
   ]

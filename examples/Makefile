@@ -3,7 +3,7 @@ TARGETS=$(SOURCES:%.hs=%.svg)
 
 %.svg: %.hs
 	@echo "$< -> $@"
-	@runhaskell $< | dot -Tsvg > $@
+	@runhaskell -i../src $< | dot -Tsvg > $@
 
 svg: $(TARGETS)
 

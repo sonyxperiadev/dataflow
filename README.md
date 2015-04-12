@@ -2,14 +2,17 @@
 
 Generate Graphviz documents from a Haskell representation.
 
+## Getting Started
+
 ```
-cabal configure
-cabal build
+cabal sandbox init
+cabal configure --enable-tests
+cabal install --only-dependencies --enable-tests
 ```
 
 ## Usage
 
-![Legend](https://rawgit.com/owickstrom/dataflow/master/example/legend.svg)
+![Legend](https://rawgit.com/owickstrom/dataflow/master/examples/legend.svg)
 
 The objects supported by DataFlow is:
 
@@ -29,13 +32,14 @@ For more on Haskell data types, see [the Hackage site](https://hackage.haskell.o
 module Main where
 
 import DataFlow.Core
+import DataFlow.Graphviz.Renderer
 import DataFlow.DFD
 
 main :: IO ()
-main = printDfd $
-  Diagram "My Diagram" [
+main = putStr $ renderGraphviz $ asDFD  $
+  Diagram (Just "Webapp") [
     TrustBoundary "browser" "Browser" [
-      Function "webapp" "Webapp"
+      Function "client" "Client"
     ],
     TrustBoundary "aws" "Amazon AWS" [
       Function "server" "Web Server",
@@ -43,11 +47,11 @@ main = printDfd $
     ],
     InputOutput "analytics" "Google Analytics",
 
-    Flow "webapp" "server" "Request /" "",
+    Flow "client" "server" "Request /" "",
     Flow "server" "logs" "Log" "User IP",
-    Flow "server" "webapp" "Response" "User Profile",
+    Flow "server" "client" "Response" "User Profile",
 
-    Flow "webapp" "analytics" "Log" "Page Navigation"
+    Flow "client" "analytics" "Log" "Page Navigation"
   ]
 ```
 
@@ -59,13 +63,12 @@ runhaskell example.hs | dot -Tsvg > example.svg
 
 That should generate something like the following.
 
-![Example Output](https://rawgit.com/owickstrom/dataflow/master/example/example.svg)
+![Example Output](https://rawgit.com/owickstrom/dataflow/master/examples/webapp.svg)
 
 ## Building the Examples
 
 ```bash
-cabal install
-make -C example
+make -C examples
 ```
 
 ## Release
