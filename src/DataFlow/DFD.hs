@@ -17,6 +17,9 @@ label s = Attr (ID "label") (ID $ inAngleBrackets s)
 bold :: String -> String
 bold s = "<b>" ++ s ++ "</b>"
 
+italic :: String -> String
+italic s = "<i>" ++ s ++ "</i>"
+
 convertObject :: C.Object -> StmtList
 
 convertObject (C.InputOutput id' name) = [
@@ -32,10 +35,10 @@ convertObject (C.TrustBoundary id' name objects) =
       objectStmts = convertObjects objects
       sgAttrStmt = AttrStmt Graph [
           Attr (ID "fontsize") (ID "10"),
-          Attr (ID "fontcolor") (ID "grey30"),
+          Attr (ID "fontcolor") (ID "grey35"),
           Attr (ID "style") (ID "dashed"),
-          Attr (ID "color") (ID "grey30"),
-          label $ bold name
+          Attr (ID "color") (ID "grey35"),
+          label $ italic name
         ]
       stmts = sgAttrStmt : objectStmts
   in [SubgraphStmt $ Subgraph sgId stmts]
@@ -61,7 +64,10 @@ convertObject (C.Flow i1 i2 op desc) =
     EdgeStmt (EdgeExpr (IDOperand (NodeID (ID i1) Nothing))
                        Arrow
                        (IDOperand (NodeID (ID i2) Nothing))) [
-      label $ bold op ++ "<br/>" ++ desc
+      label $
+        let d = if null desc then ""
+                             else "<font point-size=\"10\">" ++ desc ++ "</font>"
+        in bold op ++ "<br/>" ++ d
     ]
   ]
 
@@ -72,16 +78,16 @@ defaultGraphStmts :: StmtList
 defaultGraphStmts = [
     AttrStmt Graph [
       Attr (ID "fontname") (ID "Arial"),
-      Attr (ID "fontsize") (ID "13")
+      Attr (ID "fontsize") (ID "14")
     ],
     AttrStmt Node [
       Attr (ID "fontname") (ID "Arial"),
-      Attr (ID "fontsize") (ID "11")
+      Attr (ID "fontsize") (ID "14")
     ],
     AttrStmt Edge [
       Attr (ID "shape") (ID "none"),
       Attr (ID "fontname") (ID "Arial"),
-      Attr (ID "fontsize") (ID "11")
+      Attr (ID "fontsize") (ID "12")
     ],
     EqualsStmt (ID "labelloc") (ID $ inQuotes "t"),
     EqualsStmt (ID "fontsize") (ID "20"),

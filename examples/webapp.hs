@@ -14,7 +14,7 @@ main = putStr $ renderGraphviz $ asDFD  $
       Function "server" "Web Server",
       Database "logs" "Logs"
     ],
-    InputOutput "analytics" "Google Analytics",
+    InputOutput "analytics" "Google<br/>Analytics",
 
     Flow "client" "server" "Request /" "",
     Flow "server" "logs" "Log" "User IP",
