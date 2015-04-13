@@ -40,39 +40,3 @@ spec =
       renderGraphviz (Digraph (ID "g") [
           SubgraphStmt $ Subgraph (ID "sg") []
         ]) `shouldBe` "digraph g {\n  subgraph sg {}\n}\n"
-
-      ----------
-
-    it "does all the things" $
-      renderGraphviz (Digraph (ID "g") [
-          NodeStmt (ID "n") [
-            Attr (ID "foo") (ID "f"),
-            Attr (ID "bar") (ID "b")
-          ],
-          EdgeStmt (EdgeExpr
-                      (IDOperand $ NodeID (ID "n1") Nothing)
-                      Arrow
-                      (IDOperand $ NodeID (ID "n2") Nothing))
-            [Attr (ID "label") (ID "hello")],
-          AttrStmt Graph [
-            Attr (ID "foo") (ID "f"),
-            Attr (ID "bar") (ID "b")
-          ],
-          EqualsStmt (ID "i1") (ID "i2"),
-          SubgraphStmt $ Subgraph (ID "sg") [
-            NodeStmt (ID "n") [
-              Attr (ID "foo") (ID "f"),
-              Attr (ID "bar") (ID "b")
-            ],
-            EdgeStmt (EdgeExpr
-                      (IDOperand $ NodeID (ID "n1") Nothing)
-                      Arrow
-                      (IDOperand $ NodeID (ID "n3") Nothing))
-              [],
-            AttrStmt Graph [
-              Attr (ID "foo") (ID "f"),
-              Attr (ID "bar") (ID "b")
-            ],
-            EqualsStmt (ID "i1") (ID "i2")
-          ]
-        ]) `shouldBe` "digraph g {\n  graph sg {}\n}\n"
