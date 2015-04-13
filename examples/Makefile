@@ -3,7 +3,7 @@ TARGETS=$(SOURCES:%.hs=%.svg)
 
 %.svg: %.hs
 	@echo "$< -> $@"
-	@runhaskell -i../src $< | dot -Tsvg -Efontname=Arial -Nfontname=Arial -Gfontname=Arial > $@
+	@runhaskell -i../src $< | dot -Tsvg > $@
 
 svg: $(TARGETS)
 
