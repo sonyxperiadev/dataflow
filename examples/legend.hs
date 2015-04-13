@@ -6,7 +6,7 @@ import DataFlow.DFD
 
 main :: IO ()
 main = putStr $ renderGraphviz $ asDFD $
-  Diagram (Just "Legend") [
+  Diagram Nothing [
     TrustBoundary "trust" "TrustBoundary" [
       Function "function" "Function",
       Database "database" "Database",
