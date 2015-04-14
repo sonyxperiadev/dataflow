@@ -12,13 +12,20 @@ inAngleBrackets :: String -> String
 inAngleBrackets s = "<" ++ s ++ ">"
 
 label :: String -> Attr
+label "" Attr (ID "label") (ID "")
 label s = Attr (ID "label") (ID $ inAngleBrackets s)
 
 bold :: String -> String
+bold "" = ""
 bold s = "<b>" ++ s ++ "</b>"
 
 italic :: String -> String
+italic "" = ""
 italic s = "<i>" ++ s ++ "</i>"
+
+small :: String -> String
+small "" = ""
+small s = "<font point-size=\"10\">" ++ s ++ "</font>"
 
 convertObject :: C.Object -> StmtList
 
@@ -66,7 +73,7 @@ convertObject (C.Flow i1 i2 op desc) =
                        (IDOperand (NodeID (ID i2) Nothing))) [
       label $
         let d = if null desc then ""
-                             else "<font point-size=\"10\">" ++ desc ++ "</font>"
+                             else 
         in bold op ++ "<br/>" ++ d
     ]
   ]
