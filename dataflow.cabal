@@ -10,7 +10,7 @@ homepage:            https://github.com/sonymobile/dataflow
 license:             AllRightsReserved
 author:              Oskar Wickström
 maintainer:          oskar.wickstrom@jayway.com
-copyright:           oskar.wickstrom@jayway.com
+copyright:           Sony Mobile AB
 category:            Code Generation, Compiler, Graphs
 
 build-type:          Simple
