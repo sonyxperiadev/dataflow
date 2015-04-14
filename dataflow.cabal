@@ -17,10 +17,11 @@ category:            Code Generation, Compiler, Graphs
 build-type:          Simple
 extra-source-files:  README.md,
                      LICENSE,
-                     example/example.hs,
-                     example/example.svg,
-                     example/legend.hs,
-                     example/legend.svg
+                     examples/webapp.hs,
+                     examples/webapp.svg,
+                     examples/legend.hs,
+                     examples/legend.svg,
+                     examples/Makefile
 cabal-version:       >=1.10
 
 source-repository head
@@ -31,6 +32,7 @@ library
   exposed-modules:
     DataFlow.Core,
     DataFlow.Graphviz,
+    DataFlow.Graphviz.EdgeNormalization,
     DataFlow.Graphviz.Renderer,
     DataFlow.DFD
   build-depends:
@@ -44,11 +46,10 @@ test-suite spec
   type: exitcode-stdio-1.0
   main-is: Spec.hs
   default-language: Haskell98
-  hs-source-dirs: src, test
+  hs-source-dirs: test
   build-depends:
     base,
     HUnit,
     hspec == 2.*,
-    mtl >=2.2,
-    containers >= 0.4
+    dataflow
   ghc-options: -Wall
