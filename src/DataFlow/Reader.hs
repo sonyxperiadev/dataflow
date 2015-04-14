@@ -63,8 +63,8 @@ arrow :: Parser FlowType
 arrow = do
   s <- string "->" <|> string "--" <|> string "<-"
   case s of
-    "->" -> return Back
-    "<-" -> return Forward
+    "->" -> return Forward
+    "<-" -> return Back
     _ -> fail "Invalid flow statement"
 
 flow :: Parser Object

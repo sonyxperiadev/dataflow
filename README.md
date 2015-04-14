@@ -5,9 +5,7 @@ Generate Graphviz documents from a Haskell representation.
 ## Getting Started
 
 ```
-cabal sandbox init
-cabal configure --enable-tests
-cabal install --only-dependencies --enable-tests
+cabal install dataflow@0.6.0.0
 ```
 
 ## Usage
@@ -53,6 +51,14 @@ dataflow dfd webapp.flow | dot -Tsvg > webapp.svg
 That should generate something like the following.
 
 ![Example Output](https://rawgit.com/owickstrom/dataflow/master/examples/webapp.svg)
+
+## Build
+
+```
+cabal sandbox init
+cabal configure --enable-tests
+cabal install --only-dependencies --enable-tests
+```
 
 ## Building the Examples
 
