@@ -17,9 +17,9 @@ build-type:          Simple
 extra-source-files:  README.md,
                      LICENSE,
                      examples/webapp.flow,
-                     examples/webapp.svg,
+                     examples/webapp.png,
                      examples/legend.flow,
-                     examples/legend.svg,
+                     examples/legend.png,
                      examples/Makefile
 cabal-version:       >=1.10
 
