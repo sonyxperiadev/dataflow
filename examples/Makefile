@@ -7,7 +7,7 @@ $(DATAFLOW):
 
 %.svg: %.flow $(DATAFLOW)
 	@echo "$< -> $@"
-	@$(DATAFLOW) dfd $< | dot -Nfontname=Courier -Efontname=Courier -Tsvg > $@
+	@$(DATAFLOW) dfd $< | dot -Tsvg > $@
 
 svg: $(TARGETS)
 
