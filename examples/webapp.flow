@@ -1,0 +1,15 @@
+diagram 'Webapp' {
+  boundary 'Browser' {
+    function client 'Client'
+  }
+  boundary 'Amazon AWS' {
+    function server 'Web Server'
+    database logs 'Logs'
+  }
+  io analytics 'Google<br/>Analytics'
+
+  client -> server 'Request /' ''
+  server -> logs 'Log' 'User IP'
+  server -> client 'Response' 'User Profile'
+  client -> analytics 'Log' 'Page Navigation'
+}

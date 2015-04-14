@@ -16,49 +16,38 @@ cabal install --only-dependencies --enable-tests
 
 The objects supported by DataFlow is:
 
-* `TrustBoundary`
-* `InputOutput`
-* `Function`
-* `Database`
-* `Flow`
+* `boundary`
+* `io`
+* `function`
+* `database`
+* `->`
 
-These are composed in a `Diagram` to get something printable.
-
-For more on Haskell data types, see [the Hackage site](https://hackage.haskell.org/package/dataflow).
+These are composed in a `diagram` to get something printable.
 
 ## Example
 
-```haskell
-module Main where
+```
+diagram 'Webapp' {
+  boundary 'Browser' {
+    function client 'Client'
+  }
+  boundary 'Amazon AWS' {
+    function server 'Web Server'
+    database logs 'Logs'
+  }
+  io analytics 'Google<br/>Analytics'
 
-import DataFlow.Core
-import DataFlow.Graphviz.Renderer
-import DataFlow.DFD
-
-main :: IO ()
-main = putStr $ renderGraphviz $ asDFD  $
-  Diagram (Just "Webapp") [
-    TrustBoundary "browser" "Browser" [
-      Function "client" "Client"
-    ],
-    TrustBoundary "aws" "Amazon AWS" [
-      Function "server" "Web Server",
-      Database "logs" "Logs"
-    ],
-    InputOutput "analytics" "Google Analytics",
-
-    Flow "client" "server" "Request /" "",
-    Flow "server" "logs" "Log" "User IP",
-    Flow "server" "client" "Response" "User Profile",
-
-    Flow "client" "analytics" "Log" "Page Navigation"
-  ]
+  client -> server 'Request /' ''
+  server -> logs 'Log' 'User IP'
+  server -> client 'Response' 'User Profile'
+  client -> analytics 'Log' 'Page Navigation'
+}
 ```
 
 Then generate your output with dot.
 
 ```bash
-runhaskell example.hs | dot -Tsvg > example.svg
+dataflow dfd webapp.flow | dot -Tsvg > webapp.svg
 ```
 
 That should generate something like the following.
@@ -70,6 +59,9 @@ That should generate something like the following.
 ```bash
 make -C examples
 ```
+## Haskell Docs
+
+See [the Hackage site](https://hackage.haskell.org/package/dataflow).
 
 ## Release
 

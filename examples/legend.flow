@@ -1,0 +1,11 @@
+diagram '' {
+  boundary 'boundary' {
+    function f 'function'
+    database d 'database'
+    io i 'io'
+  }
+
+  f -> d 'Data' 'Description'
+  i -> f '' 'Description'
+  f -> i 'Data' ''
+}

@@ -17,7 +17,7 @@ type Operation = String
 type Description = String
 
 -- | The top level diagram.
-data Diagram = Diagram (Maybe Name) [Object]
+data Diagram = Diagram (Maybe Name) [Object] deriving (Eq, Show)
 
 -- | An object in a diagram.
 data Object =

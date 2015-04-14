@@ -1,9 +1,13 @@
-SOURCES=$(shell find *.hs)
-TARGETS=$(SOURCES:%.hs=%.svg)
+SOURCES=$(shell find *.flow)
+TARGETS=$(SOURCES:%.flow=%.svg)
+DATAFLOW=../dist/build/DataFlow/dataflow
 
-%.svg: %.hs
+$(DATAFLOW):
+	cd .. && cabal build
+
+%.svg: %.flow $(DATAFLOW)
 	@echo "$< -> $@"
-	@runhaskell -i../src $< | dot -Tsvg > $@
+	@$(DATAFLOW) dfd $< | dot -Nfontname=Courier -Efontname=Courier -Tsvg > $@
 
 svg: $(TARGETS)
 
