@@ -12,7 +12,7 @@ inAngleBrackets :: String -> String
 inAngleBrackets s = "<" ++ s ++ ">"
 
 label :: String -> Attr
-label "" Attr (ID "label") (ID "")
+label "" = Attr (ID "label") (ID "")
 label s = Attr (ID "label") (ID $ inAngleBrackets s)
 
 bold :: String -> String
@@ -71,10 +71,7 @@ convertObject (C.Flow i1 i2 op desc) =
     EdgeStmt (EdgeExpr (IDOperand (NodeID (ID i1) Nothing))
                        Arrow
                        (IDOperand (NodeID (ID i2) Nothing))) [
-      label $
-        let d = if null desc then ""
-                             else 
-        in bold op ++ "<br/>" ++ d
+      label $ bold op ++ "<br/>" ++ small desc
     ]
   ]
 
