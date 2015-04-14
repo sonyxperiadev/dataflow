@@ -1,17 +1,17 @@
 SOURCES=$(shell find *.flow)
-TARGETS=$(SOURCES:%.flow=%.svg)
+TARGETS=$(SOURCES:%.flow=%.png)
 DATAFLOW=../dist/build/DataFlow/dataflow
 
 $(DATAFLOW):
 	cd .. && cabal build
 
-%.svg: %.flow $(DATAFLOW)
+%.png: %.flow $(DATAFLOW)
 	@echo "$< -> $@"
-	@$(DATAFLOW) dfd $< | dot -Tsvg > $@
+	@$(DATAFLOW) dfd $< | dot -Tpng > $@
 
-svg: $(TARGETS)
+png: $(TARGETS)
 
 clean:
 	rm -f $(TARGETS)
 
-all: svg
+all: png

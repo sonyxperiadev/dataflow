@@ -10,7 +10,7 @@ cabal install dataflow@0.6.0.0
 
 ## Usage
 
-![Legend](https://rawgit.com/owickstrom/dataflow/master/examples/legend.svg)
+![Legend](examples/legend.png)
 
 The following declarations is supported by DataFlow.
 
@@ -45,12 +45,12 @@ diagram 'Webapp' {
 Then generate your output with dot.
 
 ```bash
-dataflow dfd webapp.flow | dot -Tsvg > webapp.svg
+dataflow dfd webapp.flow | dot -Tpng > webapp.png
 ```
 
 That should generate something like the following.
 
-![Example Output](https://rawgit.com/owickstrom/dataflow/master/examples/webapp.svg)
+![Example Output](examples/webapp.png)
 
 ## Build
 
