@@ -12,13 +12,13 @@ cabal install dataflow@0.6.0.0
 
 ![Legend](https://rawgit.com/owickstrom/dataflow/master/examples/legend.svg)
 
-The objects supported by DataFlow is:
+The following declarations is supported by DataFlow.
 
-* `boundary`
-* `io`
-* `function`
-* `database`
-* `->`
+* `boundary 'Title' { ... }`
+* `io identifier 'Title'`
+* `function identifier 'Title'`
+* `database identifier 'Title'`
+* `identifier -> identifier 'Operation' 'Data Description'`
 
 These are composed in a `diagram` to get something printable.
 
