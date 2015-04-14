@@ -5,7 +5,7 @@ diagram '' {
     io i 'io'
   }
 
-  f -> d 'Data' 'Description'
-  i -> f '' 'Description'
-  f -> i 'Data' ''
+  f -> d 'Operation' 'Data'
+  i -> f '' 'Data'
+  f -> i 'Operation' ''
 }
