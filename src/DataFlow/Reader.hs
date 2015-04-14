@@ -57,11 +57,21 @@ database = idAndNameObject "database" Database
 io :: Parser Object
 io = idAndNameObject "io" InputOutput
 
+data FlowType = Back | Forward
+
+arrow :: Parser FlowType
+arrow = do
+  s <- string "->" <|> string "--" <|> string "<-"
+  case s of
+    "->" -> return Back
+    "<-" -> return Forward
+    _ -> fail "Invalid flow statement"
+
 flow :: Parser Object
 flow = do
   i1 <- identifier
   skipMany1 space
-  _ <- string "->"
+  a <- arrow
   skipMany1 space
   i2 <- identifier
   skipMany1 space
@@ -69,7 +79,9 @@ flow = do
   skipMany1 space
   desc <- quoted
   skipWhitespace1
-  return $ Flow i1 i2 data' desc
+  case a of
+    Back -> return $ Flow i2 i1 data' desc
+    Forward -> return $ Flow i1 i2 data' desc
 
 boundary :: Parser Object
 boundary = do

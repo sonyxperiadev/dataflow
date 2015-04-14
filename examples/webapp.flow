@@ -11,5 +11,5 @@ diagram 'Webapp' {
   client -> server 'Request /' ''
   server -> logs 'Log' 'User IP'
   server -> client 'Response' 'User Profile'
-  client -> analytics 'Log' 'Page Navigation'
+  analytics <- client 'Log' 'Page Navigation'
 }
