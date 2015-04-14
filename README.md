@@ -20,7 +20,7 @@ The following declarations is supported by DataFlow.
 * `database identifier 'Title'`
 * `identifier -> identifier 'Operation' 'Data Description'`
 
-These are composed in a `diagram` to get something printable.
+These are used inside a `diagram { ... }`.
 
 ## Example
 
