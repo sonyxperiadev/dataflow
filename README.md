@@ -54,7 +54,7 @@ That should generate something like the following.
 
 ## Setup
 
-```
+```bash
 cabal sandbox init
 cabal install --only-dependencies --enable-tests
 cabal configure --enable-tests
@@ -62,16 +62,17 @@ cabal configure --enable-tests
 
 ## Build
 
-```
+```bash
 cabal build
 ```
 
 ## Tests
 
-```
+```bash
 ./run-tests.sh
-# or watch using https://github.com/guard/guard-shell
-guard
+# or watch for changes and run tests using https://github.com/remy/nodemon
+# NOTE: nodemon requires NodeJS.
+nodemon --watch src --watch test -e hs --exec ./run-tests.sh
 ```
 
 ## Building the Examples
