@@ -44,21 +44,18 @@ diagram 'Webapp' {
 }
 ```
 
-## Output Formats
-
-### DFD
+## DFD
 
 ![DFD Legend](examples/legend.dfd.png)
 
 ```bash
 dataflow dfd webapp.flow | dot -Tpng > webapp.png
 ```
-
-#### Outputs
+### Output
 
 ![DFD Output](examples/webapp.dfd.png)
 
-### Sequence Diagram
+## Sequence Diagram
 
 ![Sequence Diagram Legend](examples/legend.seq.png)
 
@@ -69,7 +66,7 @@ diagram.
 dataflow seq webapp.flow | java -Djava.awt.headless=true -jar plantuml.jar -tsvg -pipe > webapp.svg
 ```
 
-#### Output
+### Output
 
 ![Sequence Diagram Output](examples/webapp.seq.png)
 
