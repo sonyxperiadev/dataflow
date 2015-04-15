@@ -75,7 +75,7 @@ defaultSkinParams = [
 
     SkinParam "EntityBackgroundColor" "#999999",
 
-    SkinParam "SequenceLifeLineBorderColor" "#444444"
+    SkinParam "SequenceLifeLineBorderColor" "#bbbbbb"
   ]
 
 asSequenceDiagram :: C.Diagram -> Diagram
