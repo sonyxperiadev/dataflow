@@ -42,6 +42,7 @@ defaultSkinParams = [
     SkinParam "BackgroundColor" "#white",
     SkinParam "Shadowing" "false",
     SkinParam "SequenceMessageAlign" "center",
+    SkinParam "DefaultFontName" "Arial",
     SkinParam "DefaultFontStyle" "bold",
     SkinParam "DefaultFontColor" "#333333",
 
