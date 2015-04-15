@@ -1,6 +1,6 @@
 # DataFlow
 
-Generate Graphviz documents from a Haskell representation.
+Generate graphs and diagrams describing data flows.
 
 ## Getting Started
 
@@ -46,15 +46,28 @@ diagram 'Webapp' {
 }
 ```
 
-Then generate your output with dot.
+## Output Formats
+
+### DFD
 
 ```bash
 dataflow dfd webapp.flow | dot -Tpng > webapp.png
 ```
 
-That should generate something like the following.
+![DFD Output](examples/webapp.dfd.png)
 
-![Example Output](examples/webapp.png)
+### Sequence Diagram
+
+You can use [PlantUML](http://plantuml.sourceforge.net/) to generate a sequence
+diagram.
+
+```bash
+dataflow seq webapp.flow | java -Djava.awt.headless=true -jar plantuml.jar -tsvg -pipe > webapp.svg
+```
+
+![Sequence Diagram Output](examples/webapp.seq.png)
+
+That should generate something like the following.
 
 ## Setup
 
