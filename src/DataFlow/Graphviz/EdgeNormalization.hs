@@ -33,7 +33,7 @@ normalizeStmt :: Stmt -> Normalizer Stmt
 normalizeStmt e@(EdgeStmt (EdgeExpr (IDOperand i1) op (IDOperand i2)) attrs) = do
   i <- shouldInvert (i1, i2)
   return $ if i then EdgeStmt (EdgeExpr (IDOperand i2) op (IDOperand i1))
-                              (Attr (ID "dir") (ID "back") : attrs)
+                              (Attr "dir" "back" : attrs)
            else e
 
 normalizeStmt (SubgraphStmt (Subgraph id' stmts)) = do
