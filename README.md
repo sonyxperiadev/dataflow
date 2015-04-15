@@ -70,6 +70,16 @@ cabal configure --enable-tests
 cabal build
 ```
 
+## Install
+
+If you initialized a sandbox the executable will end up in the sandbox, i.e.
+`.cabal-sandbox/bin/dataflow`. If you have no sandbox it will end up in
+`~/.cabal/bin/dataflow`.
+
+```bash
+cabal install
+```
+
 ## Tests
 
 ```bash
