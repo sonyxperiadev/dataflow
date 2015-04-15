@@ -31,9 +31,13 @@ library
   exposed-modules:
     DataFlow.Core,
     DataFlow.Reader,
+    DataFlow.PrettyRenderer,
     DataFlow.Graphviz,
     DataFlow.Graphviz.EdgeNormalization,
     DataFlow.Graphviz.Renderer,
+    DataFlow.PlantUML,
+    DataFlow.PlantUML.Renderer,
+    DataFlow.SequenceDiagram,
     DataFlow.DFD
   build-depends:
     base >=4 && <4.8,
