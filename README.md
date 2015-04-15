@@ -2,73 +2,11 @@
 
 Generate graphs and diagrams describing data flows.
 
-## Getting Started
-
-```
-cabal install dataflow@0.6.0.0
-```
+![DFD Output](examples/webapp.dfd.png)
 
 ## Usage
 
-The following declarations is supported by DataFlow.
-
-<!--- Not Ruby code, but use Ruby code highlighter for .flow code -->
-
-```ruby
-boundary 'Title' { ... }
-io identifier 'Title'
-function identifier 'Title'
-database identifier 'Title'
-identifier -> identifier 'Operation' 'Data Description'
-```
-
-These are used inside a `diagram { ... }`.
-
-## Example
-
-```ruby
-diagram 'Webapp' {
-  boundary 'Browser' {
-    function client 'Client'
-  }
-  boundary 'Amazon AWS' {
-    function server 'Web Server'
-    database logs 'Logs'
-  }
-  io analytics 'Google<br/>Analytics'
-
-  client -> server 'Request /' ''
-  server -> logs 'Log' 'User IP'
-  server -> client 'Response' 'User Profile'
-  client -> analytics 'Log' 'Page Navigation'
-}
-```
-
-## DFD
-
-![DFD Legend](examples/legend.dfd.png)
-
-```bash
-dataflow dfd webapp.flow | dot -Tpng > webapp.png
-```
-### Output
-
-![DFD Output](examples/webapp.dfd.png)
-
-## Sequence Diagram
-
-![Sequence Diagram Legend](examples/legend.seq.png)
-
-You can use [PlantUML](http://plantuml.sourceforge.net/) to generate a sequence
-diagram.
-
-```bash
-dataflow seq webapp.flow | java -Djava.awt.headless=true -jar plantuml.jar -tsvg -pipe > webapp.svg
-```
-
-### Output
-
-![Sequence Diagram Output](examples/webapp.seq.png)
+So you want to you use DataFlow? Then please read [Usage](USAGE.md).
 
 ## Setup
 
