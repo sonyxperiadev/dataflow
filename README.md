@@ -10,8 +10,6 @@ cabal install dataflow@0.6.0.0
 
 ## Usage
 
-![Legend](examples/legend.png)
-
 The following declarations is supported by DataFlow.
 
 <!--- Not Ruby code, but use Ruby code highlighter for .flow code -->
@@ -50,16 +48,24 @@ diagram 'Webapp' {
 
 ### DFD
 
+![DFD Legend](examples/legend.dfd.png)
+
 ```bash
 dataflow dfd webapp.flow | dot -Tpng > webapp.png
 ```
+
+Outputs:
 
 ![DFD Output](examples/webapp.dfd.png)
 
 ### Sequence Diagram
 
+![Sequence Diagram Legend](examples/legend.seq.png)
+
 You can use [PlantUML](http://plantuml.sourceforge.net/) to generate a sequence
 diagram.
+
+Outputs:
 
 ```bash
 dataflow seq webapp.flow | java -Djava.awt.headless=true -jar plantuml.jar -tsvg -pipe > webapp.svg
