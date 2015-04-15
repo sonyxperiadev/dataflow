@@ -52,12 +52,26 @@ That should generate something like the following.
 
 ![Example Output](examples/webapp.png)
 
-## Build
+## Setup
 
 ```
 cabal sandbox init
-cabal configure --enable-tests
 cabal install --only-dependencies --enable-tests
+cabal configure --enable-tests
+```
+
+## Build
+
+```
+cabal build
+```
+
+## Tests
+
+```
+./run-tests.sh
+# or watch using https://github.com/guard/guard-shell
+guard
 ```
 
 ## Building the Examples
@@ -65,12 +79,11 @@ cabal install --only-dependencies --enable-tests
 ```bash
 make -C examples
 ```
-## Haskell Docs
-
-See [the Hackage site](https://hackage.haskell.org/package/dataflow).
 
 ## Release
 
 ```bash
-cabal clean && cabal build && cabal sdist && cabal upload dist/dataflow-*.tar.gz
+cabal clean && cabal build && cabal sdist &&
 ```
+
+That outputs a `dist/dataflow-*.tar.gz` that can be distrubuted.
