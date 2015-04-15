@@ -3,18 +3,36 @@ module DataFlow.SequenceDiagram where
 import Text.Printf
 import qualified DataFlow.Core as C
 import DataFlow.PlantUML
+import Data.List.Utils
+
+convertNewline :: String -> String
+convertNewline = replace "<br/>" "\\n"
+
+bold :: String -> String
+bold "" = ""
+bold s = printf "<b>%s</b>" s
+
+italic :: String -> String
+italic "" = ""
+italic s = printf "<i>%s</i>" s
 
 convertObject :: C.Object -> Stmt
 convertObject (C.InputOutput id' name) =
-  Entity id' name
+  Entity id' $ convertNewline name
 convertObject (C.TrustBoundary _ name objects) =
-  Box name $ map convertObject objects
+  Box (convertNewline name) $ map convertObject objects
 convertObject (C.Function id' name) =
-  Participant id' name
+  Participant id' $ convertNewline name
 convertObject (C.Database id' name) =
-  Database id' name
+  Database id' $ convertNewline name
 convertObject (C.Flow i1 i2 op desc) =
-  Edge i1 i2 $ printf "<b>%s</b>\\n%s" op desc
+  let p = (convertNewline (bold op), convertNewline (italic desc))
+      s = case p of
+            ("", "") -> ""
+            ("", d) -> d
+            (o, "") -> o
+            (o, d) -> o ++ "\\n" ++ d
+  in Edge i1 i2 s
 
 defaultSkinParams :: [Stmt]
 defaultSkinParams = [
