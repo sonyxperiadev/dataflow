@@ -54,7 +54,7 @@ diagram 'Webapp' {
 dataflow dfd webapp.flow | dot -Tpng > webapp.png
 ```
 
-Outputs:
+#### Outputs
 
 ![DFD Output](examples/webapp.dfd.png)
 
@@ -65,15 +65,13 @@ Outputs:
 You can use [PlantUML](http://plantuml.sourceforge.net/) to generate a sequence
 diagram.
 
-Outputs:
-
 ```bash
 dataflow seq webapp.flow | java -Djava.awt.headless=true -jar plantuml.jar -tsvg -pipe > webapp.svg
 ```
 
-![Sequence Diagram Output](examples/webapp.seq.png)
+#### Output
 
-That should generate something like the following.
+![Sequence Diagram Output](examples/webapp.seq.png)
 
 ## Setup
 
