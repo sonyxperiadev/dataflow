@@ -14,7 +14,10 @@ bold s = printf "<b>%s</b>" s
 
 italic :: String -> String
 italic "" = ""
-italic s = printf "<i>%s</i>" s
+italic s =
+  -- each line (separated by \n) needs to be wrapped in its own <i></i>
+  join "\\n" $ map italic' $ split "\\n" s
+  where italic' = printf "<i>%s</i>"
 
 convertObject :: C.Object -> Stmt
 convertObject (C.InputOutput id' name) =
@@ -26,7 +29,7 @@ convertObject (C.Function id' name) =
 convertObject (C.Database id' name) =
   Database id' $ convertNewline name
 convertObject (C.Flow i1 i2 op desc) =
-  let p = (convertNewline (bold op), convertNewline (italic desc))
+  let p = (convertNewline (bold op), italic $ convertNewline desc)
       s = case p of
             ("", "") -> ""
             ("", d) -> d
@@ -36,6 +39,7 @@ convertObject (C.Flow i1 i2 op desc) =
 
 defaultSkinParams :: [Stmt]
 defaultSkinParams = [
+    SkinParam "BackgroundColor" "#white",
     SkinParam "Shadowing" "false",
     SkinParam "SequenceMessageAlign" "center",
     SkinParam "DefaultFontStyle" "bold",
