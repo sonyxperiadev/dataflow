@@ -107,11 +107,3 @@ cabal install
 ```bash
 make -C examples
 ```
-
-## Release
-
-```bash
-cabal clean && cabal build && cabal sdist &&
-```
-
-That outputs a `dist/dataflow-*.tar.gz` that can be distributed.
