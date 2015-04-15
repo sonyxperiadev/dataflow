@@ -14,17 +14,21 @@ cabal install dataflow@0.6.0.0
 
 The following declarations is supported by DataFlow.
 
-* `boundary 'Title' { ... }`
-* `io identifier 'Title'`
-* `function identifier 'Title'`
-* `database identifier 'Title'`
-* `identifier -> identifier 'Operation' 'Data Description'`
+<!--- Not Ruby code, but use Ruby code highlighter for .flow code -->
+
+```ruby
+boundary 'Title' { ... }
+io identifier 'Title'
+function identifier 'Title'
+database identifier 'Title'
+identifier -> identifier 'Operation' 'Data Description'
+```
 
 These are used inside a `diagram { ... }`.
 
 ## Example
 
-```
+```ruby
 diagram 'Webapp' {
   boundary 'Browser' {
     function client 'Client'
