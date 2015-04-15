@@ -70,9 +70,8 @@ cabal build
 
 ```bash
 ./run-tests.sh
-# or watch for changes and run tests using https://github.com/remy/nodemon
-# NOTE: nodemon requires NodeJS.
-nodemon --watch src --watch test -e hs --exec ./run-tests.sh
+# or...
+./watch-tests.sh
 ```
 
 ## Building the Examples
