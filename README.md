@@ -59,7 +59,7 @@ That should generate something like the following.
 ## Setup
 
 ```bash
-cabal sandbox init
+cabal sandbox init # optional
 cabal install --only-dependencies --enable-tests
 cabal configure --enable-tests
 ```
@@ -90,4 +90,4 @@ make -C examples
 cabal clean && cabal build && cabal sdist &&
 ```
 
-That outputs a `dist/dataflow-*.tar.gz` that can be distrubuted.
+That outputs a `dist/dataflow-*.tar.gz` that can be distributed.
