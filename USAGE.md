@@ -62,7 +62,7 @@ dataflow seq webapp.flow | java -Djava.awt.headless=true -jar plantuml.jar -tpng
 
 ## Makefile Example
 
-The following Makefile finds `.flow` sources in 'src' and generates DFD in SVG
+The following Makefile finds `.flow` sources in `src` and generates DFD in SVG
 format in`dist`.
 
 ```make
