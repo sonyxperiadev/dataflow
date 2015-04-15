@@ -3,10 +3,7 @@
 --   in the grammar are not supported.
 module DataFlow.Graphviz where
 
-newtype ID = ID String deriving (Eq, Ord)
-
-instance Show ID where
-  show (ID i) = i
+type ID = String
 
 data Attr = Attr ID ID deriving (Show, Eq)
 type AttrList = [Attr]

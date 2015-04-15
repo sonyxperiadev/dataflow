@@ -53,11 +53,8 @@ withIndent gen = do
   gen
   dedent
 
-instance Renderable ID where
-  render (ID s) = write s
-
 instance Renderable Attr where
-  render (Attr i1 i2) = writeln $ printf "%s = %s;" (show i1) (show i2)
+  render (Attr i1 i2) = writeln $ printf "%s = %s;" i1 i2
 
 instance Renderable AttrList where
   render = mapM_ render
@@ -70,16 +67,16 @@ instance Renderable Port where
 
 instance Renderable NodeID where
   render (NodeID id' (Just port)) = do
-    render id'
+    write id'
     write ":"
     render port
-  render (NodeID id' Nothing) = render id'
+  render (NodeID id' Nothing) = write id'
 
 instance Renderable Subgraph where
   render (Subgraph id' []) =
-    writeln $ printf "subgraph %s {}" (show id')
+    writeln $ printf "subgraph %s {}" id'
   render (Subgraph id' stmts) = do
-    writeln $ printf "subgraph %s {" (show id')
+    writeln $ printf "subgraph %s {" id'
     withIndent $ render stmts
     writeln "}"
 
@@ -108,10 +105,10 @@ inBrackets r = do
 
 instance Renderable Stmt where
   render (NodeStmt id' []) = do
-    render id'
+    write id'
     writeln ""
   render (NodeStmt id' attrs) = do
-    render id'
+    write id'
     inBrackets $ render attrs
   render (EdgeStmt expr []) = do
     render expr
@@ -126,9 +123,9 @@ instance Renderable Stmt where
     render t
     inBrackets $ render attrs
   render (EqualsStmt i1 i2) = do
-    render i1
+    write i1
     write " = "
-    render i2
+    write i2
     writeln ";"
   render (SubgraphStmt sg) = render sg
 
@@ -137,7 +134,7 @@ instance Renderable StmtList where
 
 instance Renderable Graph where
   render (Digraph id' stmts) = do
-    writeln $ printf "digraph %s {" (show id')
+    writeln $ printf "digraph %s {" id'
     withIndent $ render stmts
     writeln "}"
 
