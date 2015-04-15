@@ -53,7 +53,7 @@ You can use [PlantUML](http://plantuml.sourceforge.net/) to generate a sequence
 diagram.
 
 ```bash
-dataflow seq webapp.flow | java -Djava.awt.headless=true -jar plantuml.jar -tsvg -pipe > webapp.svg
+dataflow seq webapp.flow | java -Djava.awt.headless=true -jar plantuml.jar -tpng -pipe > webapp.png
 ```
 
 ### Output
@@ -62,8 +62,10 @@ dataflow seq webapp.flow | java -Djava.awt.headless=true -jar plantuml.jar -tsvg
 
 ## Makefile Example
 
-```make
+The following Makefile finds `.flow` sources in 'src' and generates DFD in SVG
+format in`dist`.
 
+```make
 SOURCES=$(shell find src/*.flow)
 TARGETS=$(SOURCES:src/%.flow=dist/%.dfd.svg)
 
