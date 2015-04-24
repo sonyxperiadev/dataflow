@@ -26,7 +26,7 @@ cabal build
 
 If you initialized a sandbox the executable will end up in the sandbox, i.e.
 `.cabal-sandbox/bin/dataflow`. If you have no sandbox it will end up in
-`~/.cabal/bin/dataflow`.
+`~/.cabal/bin/dataflow`. If you get any stange errors during install try a `cabal clean`
 
 ```bash
 cabal install
