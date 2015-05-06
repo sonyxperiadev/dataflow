@@ -1,6 +1,8 @@
 # DataFlow
 
-Generate graphs and diagrams describing data flows.
+Render graphs using a declarative markup. Currently supports DFD
+(http://en.wikipedia.org/wiki/Data_flow_diagram) and sequence diagrams
+(http://plantuml.sourceforge.net/sequence.html).
 
 ![DFD Output](examples/webapp.dfd.png)
 
@@ -45,3 +47,7 @@ cabal install
 ```bash
 make -C examples
 ```
+
+## License
+
+BSD-3, see [LICENSE](LICENSE).
