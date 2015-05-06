@@ -38,6 +38,8 @@ diagram 'Webapp' {
 
 ![DFD Legend](examples/legend.dfd.png)
 
+To use the *DFD* output you need [Graphviz](http://www.graphviz.org/) installed.
+
 ```bash
 dataflow dfd webapp.flow | dot -Tpng > webapp.png
 ```
