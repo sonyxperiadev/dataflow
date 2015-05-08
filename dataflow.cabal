@@ -6,6 +6,7 @@ description:         Render graphs using a declarative markup. Currently
                      and sequence diagrams (http://plantuml.sourceforge.net/sequence.html).
 homepage:            https://github.com/sonyxperiadev/dataflow
 license:             BSD3
+license-file:        LICENSE
 author:              Oskar Wickström (Sony Mobile Communications)
 maintainer:          oskar.wickstrom@gmail.com
 copyright:           Sony Mobile Communications
