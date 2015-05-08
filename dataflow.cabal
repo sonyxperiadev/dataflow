@@ -1,14 +1,14 @@
 name:                dataflow
-version:             0.6.0.0
+version:             0.6.1.0
 synopsis:            Generate Graphviz documents from a Haskell representation.
 description:         Render graphs using a declarative markup. Currently
                      supports DFD (http://en.wikipedia.org/wiki/Data_flow_diagram)
                      and sequence diagrams (http://plantuml.sourceforge.net/sequence.html).
-homepage:            https://github.com/sonymobile/dataflow
+homepage:            https://github.com/sonyxperiadev/dataflow
 license:             BSD3
-author:              Oskar Wickström
-maintainer:          oskar.wickstrom@jayway.com
-copyright:           Sony Mobile AB
+author:              Oskar Wickström (Sony Mobile Communications)
+maintainer:          oskar.wickstrom@gmail.com
+copyright:           Sony Mobile Communications
 category:            Code Generation, Compiler, Graphs
 
 build-type:          Simple
@@ -25,7 +25,7 @@ cabal-version:       >=1.10
 
 source-repository head
   type: git
-  location: git@github.com:sonymobile/dataflow.git
+  location: git@github.com:sonyxperiadev/dataflow.git
 
 library
   exposed-modules:
