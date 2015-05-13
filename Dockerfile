@@ -3,9 +3,6 @@ MAINTAINER Oskar Wickström <oskar.wickstrom@gmail.com>
 
 # HASKELL
 
-# Ensure locale is set during build
-ENV LANG            C.UTF-8
-
 RUN echo 'deb http://ppa.launchpad.net/hvr/ghc/ubuntu trusty main' > /etc/apt/sources.list.d/ghc.list && \
     apt-key adv --keyserver keyserver.ubuntu.com --recv-keys F6F88286 && \
     apt-get update && \
@@ -15,16 +12,15 @@ RUN echo 'deb http://ppa.launchpad.net/hvr/ghc/ubuntu trusty main' > /etc/apt/so
 
 ENV PATH /root/.cabal/bin:/opt/cabal/1.20/bin:/opt/ghc/7.8.4/bin:/opt/happy/1.19.4/bin:/opt/alex/3.1.3/bin:$PATH
 
-RUN cabal update
-
 ## DATAFLOW
 
 ADD . /usr/local/dataflow
 WORKDIR /usr/local/dataflow
-RUN cabal sandbox init
-RUN cabal install --only-dependencies
-RUN cabal configure
-RUN cabal install
+RUN cabal update && \
+    cabal sandbox init && \
+    cabal install --only-dependencies && \
+    cabal configure && \
+    cabal install
 
 RUN ln -s /usr/local/dataflow/.cabal-sandbox/bin/dataflow /usr/bin/dataflow
 
