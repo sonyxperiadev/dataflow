@@ -1,11 +1,9 @@
-module DataFlow.Reader (readDiagram, readDiagramFile) where
+module DataFlow.Reader {-(readDiagram, readDiagramFile)-} where
 
+import Control.Monad
 import Text.ParserCombinators.Parsec
-import Data.Char
+import qualified Data.Map as M
 import DataFlow.Core
-
-nameToID :: String -> String
-nameToID = filter isLetter . map toLower
 
 identifier :: Parser ID
 identifier = do
@@ -13,19 +11,22 @@ identifier = do
   rest <-  many (letter <|> digit <|> char '_')
   return $ first : rest
 
-quoted :: Parser ID
-quoted = do
+str :: Parser ID
+str = do
   -- TODO: Handle escaped characters.
-  _ <- char '\''
-  s <- many (noneOf "'")
-  _ <- char '\''
+  _ <- char '"'
+  s <- many (noneOf "\"\r\n")
+  _ <- char '"'
   return s
 
 skipWhitespace :: Parser ()
 skipWhitespace = skipMany $ space <|> newline
 
-skipWhitespace1 :: Parser ()
-skipWhitespace1 = skipMany $ space <|> newline
+whiteSpaceWithNewLine :: Parser ()
+whiteSpaceWithNewLine = do
+  skipMany space
+  skipMany1 newline
+  skipMany $ newline <|> space
 
 inBraces :: Parser t -> Parser t
 inBraces inside = do
@@ -38,24 +39,48 @@ inBraces inside = do
   skipWhitespace
   return c
 
-idAndNameObject :: String -> (ID -> ID -> t) -> Parser t
-idAndNameObject keyword f = do
+attr :: Parser (String, String)
+attr = do
+  key <- identifier
+  _ <- string " = "
+  value <- str
+  skipWhitespace
+  return (key, value)
+
+attrs :: Parser Attributes
+attrs = liftM M.fromList $ attr `sepBy` (many $ space <|> newline)
+
+data BracesDeclaration = AttrDecl (String, String) | ObjectDecl Object
+
+attrsAndObjects :: Parser (Attributes, [Object])
+attrsAndObjects = do
+  decls <- (try attrDecl <|> objDecl) `sepBy` (many $ space <|> newline)
+  let (pairs, objs) = foldr iter ([], []) decls
+  return (M.fromList pairs, objs)
+  where
+  attrDecl = liftM AttrDecl attr
+  objDecl = liftM ObjectDecl object
+  iter (AttrDecl a) (as, os) =    (a : as, os    )
+  iter (ObjectDecl o) (as, os) =  (as,     o : os)
+
+idAndAttrsObject :: String -> (ID -> Attributes -> t) -> Parser t
+idAndAttrsObject keyword f = do
   _ <- string keyword
   skipMany1 space
   id' <- identifier
-  skipMany1 space
-  name <- quoted
-  skipWhitespace1
-  return $ f id' name
+  skipMany space
+  a <- option M.empty $ inBraces attrs
+  skipWhitespace
+  return $ f id' a
 
 function :: Parser Object
-function = idAndNameObject "function" Function
+function = idAndAttrsObject "function" Function
 
 database :: Parser Object
-database = idAndNameObject "database" Database
+database = idAndAttrsObject "database" Database
 
 io :: Parser Object
-io = idAndNameObject "io" InputOutput
+io = idAndAttrsObject "io" InputOutput
 
 data FlowType = Back | Forward
 
@@ -71,28 +96,22 @@ flow :: Parser Object
 flow = do
   i1 <- identifier
   skipMany1 space
-  a <- arrow
+  arr <- arrow
   skipMany1 space
   i2 <- identifier
   skipMany1 space
-  data' <- quoted
-  skipMany1 space
-  desc <- quoted
-  skipWhitespace1
-  case a of
-    Back -> return $ Flow i2 i1 data' desc
-    Forward -> return $ Flow i1 i2 data' desc
+  a <- option M.empty attrs
+  case arr of
+    Back -> return $ Flow i2 i1 a
+    Forward -> return $ Flow i1 i2 a
 
 boundary :: Parser Object
 boundary = do
   _ <- string "boundary"
   skipMany1 space
-  name <- quoted
-  let id' = nameToID name
-  skipMany1 space
-  objs <- inBraces objects
-  skipWhitespace1
-  return $ TrustBoundary id' name objs
+  (a, objs) <- inBraces attrsAndObjects
+  skipWhitespace
+  return $ TrustBoundary a objs
 
 object :: Parser Object
 object =
@@ -102,29 +121,14 @@ object =
   <|> try io
   <|> flow
 
-objects :: Parser [Object]
-objects = object `sepBy` many (space <|> newline)
-
-namedDiagram :: Parser Diagram
-namedDiagram = do
-  _ <- string "diagram"
-  skipMany1 space
-  name <- quoted
-  skipMany1 space
-  objs <- inBraces objects
-  return $ Diagram (Just name) objs
-
-unnamedDiagram :: Parser Diagram
-unnamedDiagram = do
-  _ <- string "diagram"
-  skipMany1 space
-  objs <- inBraces objects
-  return $ Diagram Nothing objs
-
 diagram :: Parser Diagram
-diagram = try unnamedDiagram <|> namedDiagram
+diagram = do
+  _ <- string "diagram"
+  skipMany1 space
+  (a, objs) <- inBraces $ attrsAndObjects
+  return $ Diagram a objs
 
-readDiagram :: String -> String ->  Either ParseError Diagram
+readDiagram :: String -> String -> Either ParseError Diagram
 readDiagram = parse diagram
 
 readDiagramFile :: FilePath -> IO (Either ParseError Diagram)
