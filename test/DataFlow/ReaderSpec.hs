@@ -4,7 +4,6 @@ import Control.Monad (when)
 import Data.Map as M
 import Test.Hspec
 import Text.Printf
-import Text.ParserCombinators.Parsec
 import DataFlow.Core
 import DataFlow.Reader
 
@@ -30,9 +29,9 @@ shouldFailRead :: String -> Expectation
 shouldFailRead s =
   either onFailure onSuccess (readDiagram "test input" s)
   where onFailure _ = return ()
-        onSuccess diagram =
+        onSuccess d =
           expectationFailure $
-            printf "Expected read to fail, but got: %s" (show diagram)
+            printf "Expected read to fail, but got: %s" (show d)
 spec :: Spec
 spec =
   describe "readDiagram" $ do
@@ -148,6 +147,17 @@ spec =
                           ]
       in input `shouldReadAs` Diagram (M.singleton "name" "bar") [
           InputOutput "baz" (M.singleton "title" "foo")
+        ]
+    it "reads flow with attributes" $
+      let input = unlines [
+                            "diagram {",
+                            "  foo -> bar {",
+                            "    title = \"baz\"",
+                            "  }",
+                            "}"
+                          ]
+      in input `shouldReadAs` Diagram M.empty [
+          Flow "foo" "bar" (M.singleton "title" "baz")
         ]
 
 

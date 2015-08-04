@@ -1,9 +1,12 @@
 module DataFlow.SequenceDiagram where
 
-import Text.Printf
-import qualified DataFlow.Core as C
-import DataFlow.PlantUML
+import qualified Data.Map as M
 import Data.List.Utils
+import Text.Printf
+
+import qualified DataFlow.Core as C
+import DataFlow.Attributes
+import DataFlow.PlantUML
 
 convertNewline :: String -> String
 convertNewline = replace "<br/>" "\\n"
@@ -20,16 +23,17 @@ italic s =
   where italic' = printf "<i>%s</i>"
 
 convertObject :: C.Object -> Stmt
-convertObject (C.InputOutput id' name) =
-  Entity id' $ convertNewline name
-convertObject (C.TrustBoundary _ name objects) =
-  Box (convertNewline name) $ map convertObject objects
-convertObject (C.Function id' name) =
-  Participant id' $ convertNewline name
-convertObject (C.Database id' name) =
-  Database id' $ convertNewline name
-convertObject (C.Flow i1 i2 op desc) =
-  let p = (convertNewline (bold op), italic $ convertNewline desc)
+convertObject (C.InputOutput id' attrs) =
+  Entity id' $ convertNewline $ getTitleOrBlank attrs
+convertObject (C.TrustBoundary attrs objects) =
+  Box (convertNewline $ M.findWithDefault "Untitled" "title" attrs) $ map convertObject objects
+convertObject (C.Function id' attrs) =
+  Participant id' $ convertNewline $ getTitleOrBlank attrs
+convertObject (C.Database id' attrs) =
+  Database id' $ convertNewline $ getTitleOrBlank attrs
+convertObject (C.Flow i1 i2 attrs) =
+  let p = (convertNewline (bold $ M.findWithDefault "" "operation" attrs),
+           italic $ convertNewline (M.findWithDefault "" "data" attrs))
       s = case p of
             ("", "") -> ""
             ("", d) -> d

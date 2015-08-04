@@ -1,28 +1,25 @@
-diagram "" [
-  boundary "boundary" [
+diagram {
+  boundary {
     function f {
-      title: "function"
+      title = "function"
     }
     database d {
-      title: "database"
+      title = "database"
     }
     io i {
-      title: "io"
+      title = "io"
     }
-  ]
+  }
 
   f -> d {
-    action: "Operation"
-    data: "Data"
+    action = "Operation"
+    data = "Data"
   }
   i -> f {
-    data: "Data"
+    data = "Data"
   }
   f -> i {
-    action: "Operation"
-    description: |You can do text blocks, using pipes, to be able to write
-                 |formatted descriptions etc.
-                 |
-                 |There can be these cool paragraphs.
+    action = "Operation"
+    description = "Stuff and such!"
   }
-]
+}

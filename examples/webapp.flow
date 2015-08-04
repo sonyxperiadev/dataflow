@@ -9,7 +9,9 @@ diagram {
     }
   }
 
-  boundary "Amazon AWS" {
+  boundary {
+    title = "Amazon AWS"
+
     function server {
       title = "Web Server"
     }
@@ -22,21 +24,19 @@ diagram {
   }
 
   client -> server {
-    action = "Request /"
+    operation = "Request /"
   }
   server -> logs {
-    action = "Log"
+    operation = "Log"
     data = "User IP"
-    description =
-      |A multiline
-      |description.
+    description = "This is how it works..."
   }
   server -> client {
-    action = "Response"
+    operation = "Response"
     data = "User Profile"
   }
   analytics <- client {
-    action = "Log"
+    operation = "Log"
     data = "Page Navigation"
   }
-]
+}

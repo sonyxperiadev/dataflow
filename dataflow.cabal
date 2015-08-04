@@ -31,6 +31,7 @@ source-repository head
 library
   exposed-modules:
     DataFlow.Core,
+    DataFlow.Attributes,
     DataFlow.Reader,
     DataFlow.PrettyRenderer,
     DataFlow.Graphviz,
@@ -64,6 +65,7 @@ test-suite spec
   hs-source-dirs: test
   build-depends:
     base,
+    containers >= 0.4,
     HUnit,
     hspec == 2.*,
     dataflow
