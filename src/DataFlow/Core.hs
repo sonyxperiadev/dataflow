@@ -1,33 +1,29 @@
 module DataFlow.Core (
   ID,
-  Name,
-  Operation,
-  Description,
+  Attributes,
   Diagram(..),
   Object(..)
   ) where
 
+import Data.Map as M
+
 -- | An identifier corresponding to those in Graphviz.
 type ID = String
--- | The name of a 'Diagram' or 'Object'.
-type Name = String
--- | Operation heading.
-type Operation = String
--- | Operation description.
-type Description = String
+
+type Attributes = M.Map String String
 
 -- | The top level diagram.
-data Diagram = Diagram (Maybe Name) [Object] deriving (Eq, Show)
+data Diagram = Diagram Attributes [Object] deriving (Eq, Show)
 
 -- | An object in a diagram.
 data Object =
             -- | A "Input" or "Output" in DFD.
-            InputOutput ID Name
+            InputOutput ID Attributes
             -- | Surrounds other objects, denoting a boundary.
-            | TrustBoundary ID Name [Object]
+            | TrustBoundary Attributes [Object]
             -- | A \"Function\" in DFD.
-            | Function ID Name
+            | Function ID Attributes
             -- | A \"Database\" in DFD.
-            | Database ID Name
+            | Database ID Attributes
             -- | Describes the flow of data between two objects.
-            | Flow ID ID Operation Description deriving (Show, Eq)
+            | Flow ID ID Attributes deriving (Show, Eq)
