@@ -100,7 +100,7 @@ flow = do
   skipMany1 space
   i2 <- identifier
   skipMany1 space
-  a <- option M.empty attrs
+  a <- option M.empty $ inBraces attrs
   case arr of
     Back -> return $ Flow i2 i1 a
     Forward -> return $ Flow i1 i2 a

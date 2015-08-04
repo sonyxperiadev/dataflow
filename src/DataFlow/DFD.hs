@@ -3,21 +3,34 @@ module DataFlow.DFD where
 import Text.Printf
 import Control.Monad
 import Control.Monad.State
+import qualified Data.Map as M
+
 import qualified DataFlow.Core as C
+import DataFlow.Attributes
 import DataFlow.Graphviz
 import DataFlow.Graphviz.EdgeNormalization
 
-type Step = Int
-type DFD v = State Step v
+data DFDState = DFDState { step :: Int, clusterID :: Int }
+type DFD v = State DFDState v
 
 incrStep :: DFD ()
-incrStep = modify (+ 1)
+incrStep = modify f
+  where f s = DFDState (step s + 1) (clusterID s)
+
+incrClusterID :: DFD ()
+incrClusterID = modify f
+  where f s = DFDState (step s) (clusterID s + 1)
 
 -- | Get the next \"step\" number (the order of flow arrows in the diagram).
 nextStep :: DFD Int
 nextStep = do
   incrStep
-  get
+  liftM step get
+
+nextClusterID :: DFD Int
+nextClusterID = do
+  incrClusterID
+  liftM clusterID get
 
 inQuotes :: String -> String
 inQuotes s = "\"" ++ s ++ "\""
@@ -47,49 +60,60 @@ color c s = printf "<font color=\"%s\">%s</font>" c s
 
 convertObject :: C.Object -> DFD StmtList
 
-convertObject (C.InputOutput id' name) = return [
+convertObject (C.InputOutput id' attrs) = return [
     NodeStmt id' [
       Attr "shape" "square",
       Attr "style" "bold",
-      label $ printf "<table border=\"0\" cellborder=\"0\" cellpadding=\"2\"><tr><td>%s</td></tr></table>" (bold name)
+      label $
+        printf "<table border=\"0\" cellborder=\"0\" cellpadding=\"2\"><tr><td>%s</td></tr></table>"
+                (bold $ getTitleOrBlank attrs)
     ]
   ]
 
-convertObject (C.TrustBoundary id' name objects) = do
+convertObject (C.TrustBoundary attrs objects) = do
   objectStmts <- convertObjects objects
-  let sgId = "cluster_" ++ id'
-      sgAttrStmt = AttrStmt Graph [
+  id' <- nextClusterID
+  let sgId = "cluster_" ++ show id'
+      defaultSgAttrs = [
           Attr "fontsize" "10",
           Attr "fontcolor" "grey35",
           Attr "style" "dashed",
-          Attr "color" "grey35",
-          label $ italic name
-        ]
+          Attr "color" "grey35"]
+      sgAttrs = case getTitle attrs of
+                  Just title -> defaultSgAttrs ++ [label $ italic title]
+                  Nothing -> defaultSgAttrs
+      sgAttrStmt = AttrStmt Graph sgAttrs
       stmts = sgAttrStmt : objectStmts
   return [SubgraphStmt $ Subgraph sgId stmts]
 
-convertObject (C.Function id' name) = return [
+convertObject (C.Function id' attrs) = return [
     NodeStmt id' [
       Attr "shape" "circle",
-      label $ bold name
+      label $ bold $ getTitleOrBlank attrs
     ]
   ]
 
-convertObject (C.Database id' name) = return [
+convertObject (C.Database id' attrs) = return [
     NodeStmt id' [
       Attr "shape" "none",
-      label $ printf "<table sides=\"TB\" cellborder=\"0\"><tr><td>%s</td></tr></table>" (bold name)
+      label $ printf "<table sides=\"TB\" cellborder=\"0\"><tr><td>%s</td></tr></table>"
+              (bold $ getTitleOrBlank attrs)
     ]
   ]
 
-convertObject (C.Flow i1 i2 op desc) = do
-    step <- nextStep
-    let stepStr = color "#3184e4" $ bold $ printf "(%d) " step
+convertObject (C.Flow i1 i2 attrs) = do
+    s <- nextStep
+    let stepStr = color "#3184e4" $ bold $ printf "(%d) " s
+    let text = case (M.lookup "operation" attrs, M.lookup "data" attrs) of
+                (Just op, Just d) -> bold op ++ "<br/>" ++ small d
+                (Just op, Nothing) -> bold op
+                (Nothing, Just d) -> small d
+                _ -> ""
     return [
         EdgeStmt (EdgeExpr (IDOperand (NodeID i1 Nothing))
                           Arrow
                           (IDOperand (NodeID i2 Nothing))) [
-          label $ stepStr ++ bold op ++ "<br/>" ++ small desc
+          label $ stepStr ++ text
         ]
       ]
 
@@ -119,16 +143,16 @@ defaultGraphStmts = [
 
 convertDiagram :: C.Diagram -> DFD Graph
 
-convertDiagram (C.Diagram (Just name) objects) = do
-  let lbl = EqualsStmt "label" (inAngleBrackets $ bold name)
+convertDiagram (C.Diagram attrs objects) = do
   objs <- convertObjects objects
-  let stmts = lbl : defaultGraphStmts ++ objs
-  return $ normalize $ Digraph (inQuotes name) stmts
-
-convertDiagram (C.Diagram Nothing objects) = do
-  objs <- convertObjects objects
-  return $ normalize $ Digraph "Untitled" $ defaultGraphStmts ++ objs
+  return $ case M.lookup "title" attrs of
+              Just title ->
+                let lbl = EqualsStmt "label" (inAngleBrackets $ bold title)
+                    stmts = lbl : defaultGraphStmts ++ objs
+                in normalize $ Digraph (inQuotes title) stmts
+              Nothing ->
+                normalize $ Digraph "Untitled" $ defaultGraphStmts ++ objs
 
 asDFD :: C.Diagram -> Graph
-asDFD d = evalState (convertDiagram d) 0
+asDFD d = evalState (convertDiagram d) DFDState { step = 0, clusterID = 0 }
 
