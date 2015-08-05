@@ -28,8 +28,8 @@ diagram {
   }
   server -> logs {
     operation = "Log"
-    data = "User IP"
-    description = "This is how it works..."
+    data = `The user
+            IP address.`
   }
   server -> client {
     operation = "Response"

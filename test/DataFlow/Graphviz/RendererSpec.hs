@@ -40,3 +40,10 @@ spec =
       renderGraphviz (Digraph "g" [
           SubgraphStmt $ Subgraph "sg" []
         ]) `shouldBe` "digraph g {\n  subgraph sg {}\n}\n"
+
+    it "converts newlines to <br/>" $
+      renderGraphviz (Digraph "g" [
+          AttrStmt Graph [
+            Attr "hello" "foo\nbar"
+          ]
+        ]) `shouldBe` "digraph g {\n  graph [\n    hello = foo<br/>bar;\n  ]\n}\n"
