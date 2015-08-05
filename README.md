@@ -176,6 +176,15 @@ diagram {
 }
 ```
 
+## Run DataFlow
+
+The `dataflow` executable takes an output format and a DataFlow source document
+and writes the output to `stdout`.
+
+```bash
+dataflow (dfd|seq) FILE
+```
+
 ## DFD
 
 ![DFD Legend](examples/legend.dfd.png)
