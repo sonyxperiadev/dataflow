@@ -8,8 +8,6 @@ Render graphs using a declarative markup. Currently supports DFD
 
 ## Usage
 
-### Objects
-
 The following forms are supported by DataFlow.
 
 #### IDs
