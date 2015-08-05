@@ -9,7 +9,7 @@ import DataFlow.Attributes
 import DataFlow.PlantUML
 
 convertNewline :: String -> String
-convertNewline = replace "<br/>" "\\n"
+convertNewline = replace "\n" "\\n"
 
 bold :: String -> String
 bold "" = ""

@@ -1,22 +1,128 @@
 # DataFlow Usage
 
-The following declarations is supported by DataFlow.
+## Objects
 
-<!--- Not Ruby code, but use Ruby code highlighter for .flow code -->
+The following forms are supported by DataFlow.
 
-```ruby
-boundary "Title" { ... }
-io identifier "Title"
-function identifier "Title"
-database identifier "Title"
-identifier -> identifier "Operation" "Data Description"
+### IDs
+
+An ID can contain letters, numbers and underscores. It must start with a
+letter.
+
+<!--- Not dot code, but use dot code highlighter for .flow code -->
+```dot
+my_id_contain_4_words
 ```
 
-These are used inside a `diagram { ... }`.
+### Strings
+
+String literals are written using double quotes.
+
+```dot
+"this is a string and it can contain everything but double quotes and newlines"
+```
+
+**NOTE!** Escaping characters inside strings is not supported at the moment.
+
+### Text Blocks
+
+Text blocks are special strings, enclosed in backticks, that are can span
+multiple lines in the source document. The space characters before the first
+non-space characters on each line are trimmed, regardless of the indentation.
+Linebreaks inside the text block are preserved.
+
+```dot
+`this is
+      a
+  textblock`
+```
+
+... would render as:
+
+```
+this is
+a
+textblock
+```
+
+### Attributes
+
+Attributes are key-value pairs for diagrams and objects that are used by
+output renderers. Attributes are enclosed by curly brackets. For objects that
+can contain other objects, attributes and child objects can be mixed.
+
+Keys have the same rules as IDs. Values can be strings or text blocks.
+
+```dot
+{
+  key1 = "attr value"
+  key2 = `attr
+          value`
+}
+```
+
+### `diagram`
+
+`diagram` is the top-level form and must appear exactly once in a DataFlow
+document. It can contain attributes and objects.
+
+```dot
+diagram {
+  title = "My diagram"
+}
+```
+
+### `boundary`
+
+The `boundary` form declares a TrustBoundary object that can contain
+attributes and other objects.
+
+```dot
+diagram {
+  boundary {
+    title = "My System"
+  }
+}
+```
+
+### `io`, `function`, `database`
+
+The `io`, `function` and `database` forms declare `InputOutput`, `Function` and
+`Database` objects, respectively. The objects have IDs and they can contain
+attributes. Empty attribute brackets can be omitted.
+
+```dot
+diagram {
+  io thing1
+
+  io thing2 {
+    title = "Thing 2"
+  }
+}
+
+```
+
+### `->`
+
+The `->` form declares a `Flow` object between the objects referenced by their
+IDs. It can contain attributes. Empty attribute brackets can be omitted.
+
+Note that the arrow can be reversed as well (`<-`).
+
+```dot
+diagram {
+  thing1 -> thing2
+
+  thing1 <- thing2 {
+    operation = "Greet"
+    data = "A nice greeting"
+  }
+}
+```
 
 ## Example
 
-```ruby
+```dot
 diagram {
   title = ""
 
@@ -28,7 +134,9 @@ diagram {
     }
   }
 
-  boundary "Amazon AWS" {
+  boundary {
+    title = "Amazon AWS"
+
     function server {
       title = "Web Server"
     }
@@ -41,24 +149,22 @@ diagram {
   }
 
   client -> server {
-    action = "Request /"
+    operation = "Request /"
   }
   server -> logs {
-    action = "Log"
-    data = "User IP"
-    description =
-      |A multiline
-      |description.
+    operation = "Log"
+    data = `The user
+            IP address.`
   }
   server -> client {
-    action = "Response"
+    operation = "Response"
     data = "User Profile"
   }
   analytics <- client {
-    action = "Log"
+    operation = "Log"
     data = "Page Navigation"
   }
-]
+}
 ```
 
 ## DFD

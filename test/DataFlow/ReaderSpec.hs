@@ -145,3 +145,16 @@ spec =
       in input `shouldReadAsDiagram` Diagram M.empty [
           Flow "foo" "bar" (M.singleton "title" "baz")
         ]
+    it "reads text blocks" $
+      let input = unlines [
+                            "diagram {",
+                            "  foo -> bar {",
+                            "    description = `Hello,",
+                            "                   \"evil\"",
+                            "                   world!`",
+                            "  }",
+                            "}"
+                          ]
+      in input `shouldReadAsDiagram` Diagram M.empty [
+          Flow "foo" "bar" (M.singleton "description" "Hello,\n\"evil\"\nworld!")
+        ]

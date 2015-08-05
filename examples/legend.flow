@@ -1,5 +1,7 @@
 diagram {
   boundary {
+    title = "A boundary"
+
     function f {
       title = "function"
     }
@@ -20,6 +22,7 @@ diagram {
   }
   f -> i {
     action = "Operation"
-    description = "Stuff and such!"
+    data = `Some data,
+            and other data.`
   }
 }

@@ -6,15 +6,20 @@ module DataFlow.Graphviz.Renderer (
   ) where
 
 import Data.Char
+import Data.List.Utils
 import Text.Printf
+
 import DataFlow.PrettyRenderer
 import DataFlow.Graphviz
+
+convertNewline :: String -> String
+convertNewline = replace "\n" "<br/>"
 
 class Renderable t where
   render :: t -> Renderer ()
 
 instance Renderable Attr where
-  render (Attr i1 i2) = writeln $ printf "%s = %s;" i1 i2
+  render (Attr i1 i2) = writeln $ printf "%s = %s;" i1 (convertNewline i2)
 
 instance Renderable AttrList where
   render = mapM_ render
