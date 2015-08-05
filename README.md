@@ -126,7 +126,10 @@ diagram {
 }
 ```
 
-### Example
+## Example
+
+The image from the top of this README is rendered from the following DataFlow
+document.
 
 ```dot
 diagram {
@@ -173,7 +176,7 @@ diagram {
 }
 ```
 
-### DFD
+## DFD
 
 ![DFD Legend](examples/legend.dfd.png)
 
@@ -182,11 +185,11 @@ To use the *DFD* output you need [Graphviz](http://www.graphviz.org/) installed.
 ```bash
 dataflow dfd webapp.flow | dot -Tpng > webapp.png
 ```
-#### Output
+### Output
 
 ![DFD Output](examples/webapp.dfd.png)
 
-### Sequence Diagram
+## Sequence Diagram
 
 ![Sequence Diagram Legend](examples/legend.seq.png)
 
@@ -197,11 +200,11 @@ diagram.
 dataflow seq webapp.flow | java -Djava.awt.headless=true -jar plantuml.jar -tpng -pipe > webapp.png
 ```
 
-#### Output
+### Output
 
 ![Sequence Diagram Output](examples/webapp.seq.png)
 
-### Makefile Example
+## Makefile Example
 
 The following Makefile finds `.flow` sources in `src` and generates DFDs, in
 SVG format, in `dist`.
