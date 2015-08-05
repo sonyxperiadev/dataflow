@@ -1,6 +1,8 @@
 SOURCES=$(shell find *.flow)
 DFD_TARGETS=$(SOURCES:%.flow=%.dfd.png)
 SEQ_TARGETS=$(SOURCES:%.flow=%.seq.png)
+HTML_TARGETS=$(SOURCES:%.flow=%.html)
+HTML_TEMPLATE=template.ha
 DATAFLOW=../dist/build/DataFlow/dataflow
 PLANTUML=/tmp/dataflow-build/plantuml.jar
 
@@ -19,9 +21,15 @@ $(PLANTUML):
 	@echo "$< -> $@"
 	@$(DATAFLOW) seq $< | java -Djava.awt.headless=true -jar $(PLANTUML) -tpng -pipe > $@
 
+%.html: %.flow $(DATAFLOW) $(HTML_TEMPLATE)
+	@echo "$< -> $@"
+	@$(DATAFLOW) template $(HTML_TEMPLATE) $< > $@
+
 png: $(DFD_TARGETS) $(SEQ_TARGETS)
+
+html: $(HTML_TARGETS)
 
 clean:
 	rm -f $(DFD_TARGETS) $(SEQ_TARGETS)
 
-all: png
+all: png html

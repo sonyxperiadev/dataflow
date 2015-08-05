@@ -1,4 +1,6 @@
 diagram {
+  title = "Legend"
+
   boundary {
     title = "A boundary"
 
