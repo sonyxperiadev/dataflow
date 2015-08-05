@@ -1,8 +1,9 @@
 module DataFlow.Reader {-(readDiagram, readDiagramFile)-} where
 
 import Control.Monad
-import Text.ParserCombinators.Parsec
 import qualified Data.Map as M
+import Text.ParserCombinators.Parsec
+
 import DataFlow.Core
 
 identifier :: Parser ID
@@ -19,24 +20,15 @@ str = do
   _ <- char '"'
   return s
 
-skipWhitespace :: Parser ()
-skipWhitespace = skipMany $ space <|> newline
-
-whiteSpaceWithNewLine :: Parser ()
-whiteSpaceWithNewLine = do
-  skipMany space
-  skipMany1 newline
-  skipMany $ newline <|> space
-
 inBraces :: Parser t -> Parser t
 inBraces inside = do
-  skipWhitespace
+  spaces
   _ <- char '{'
-  skipWhitespace
+  spaces
   c <- inside
-  skipWhitespace
+  spaces
   _ <- char '}'
-  skipWhitespace
+  spaces
   return c
 
 attr :: Parser (String, String)
@@ -44,17 +36,17 @@ attr = do
   key <- identifier
   _ <- string " = "
   value <- str
-  skipWhitespace
+  spaces
   return (key, value)
 
 attrs :: Parser Attributes
-attrs = liftM M.fromList $ attr `sepBy` (many $ space <|> newline)
+attrs = liftM M.fromList $ attr `sepBy` spaces
 
 data BracesDeclaration = AttrDecl (String, String) | ObjectDecl Object
 
 attrsAndObjects :: Parser (Attributes, [Object])
 attrsAndObjects = do
-  decls <- (try attrDecl <|> objDecl) `sepBy` (many $ space <|> newline)
+  decls <- (try attrDecl <|> objDecl) `sepBy` spaces
   let (pairs, objs) = foldr iter ([], []) decls
   return (M.fromList pairs, objs)
   where
@@ -70,7 +62,7 @@ idAndAttrsObject keyword f = do
   id' <- identifier
   skipMany space
   a <- option M.empty $ inBraces attrs
-  skipWhitespace
+  spaces
   return $ f id' a
 
 function :: Parser Object
@@ -110,7 +102,7 @@ boundary = do
   _ <- string "boundary"
   skipMany1 space
   (a, objs) <- inBraces attrsAndObjects
-  skipWhitespace
+  spaces
   return $ TrustBoundary a objs
 
 object :: Parser Object
@@ -125,7 +117,9 @@ diagram :: Parser Diagram
 diagram = do
   _ <- string "diagram"
   skipMany1 space
-  (a, objs) <- inBraces $ attrsAndObjects
+  (a, objs) <- inBraces attrsAndObjects
+  spaces
+  eof
   return $ Diagram a objs
 
 readDiagram :: String -> String -> Either ParseError Diagram
