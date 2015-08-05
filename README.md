@@ -213,6 +213,22 @@ dataflow seq webapp.flow | java -Djava.awt.headless=true -jar plantuml.jar -tpng
 
 ![Sequence Diagram Output](examples/webapp.seq.png)
 
+## Templating
+
+You can use [Hastache](https://github.com/lymar/hastache) to output arbitrary
+text with its Mustache-like templates.
+
+```bash
+dataflow template template.ha webapp.flow > webapp.html
+```
+
+For an example see [template.ha](examples/template.ha) and the output HTML in
+[webapp.html](examples/webapp.html).
+
+### Output
+
+![Sequence Diagram Output](examples/webapp.seq.png)
+
 ## Makefile Example
 
 The following Makefile finds `.flow` sources in `src` and generates DFDs, in
