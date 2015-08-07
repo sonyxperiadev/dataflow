@@ -20,6 +20,7 @@ usage = hPutStrLn stderr $ unlines [
     "dfd SRC               - outputs a DFD in the Graphviz DOT format",
     "seq SRC               - outputs a sequence diagram in PlantUML format",
     "template TEMPLATE SRC - renders the TEMPLATE using data from SRC",
+    "validate SRC          - validates the input",
     "",
     "All commands print to stdout."
   ]
@@ -46,6 +47,13 @@ template tmplPath path = do
     (Left err) -> print err
     (Right d) -> renderTemplate tmplStr path d >>= TL.putStr
 
+validate :: FilePath -> IO ()
+validate path = do
+  res <- readDiagramFile path
+  case res of
+    (Left err) -> print err
+    (Right _) -> return ()
+
 main :: IO ()
 main = do
   args <- getArgs
@@ -53,6 +61,7 @@ main = do
     ["dfd", path] -> dfd path
     ["seq", path] -> seq' path
     ["template", tmplPath, path] -> template tmplPath path
+    ["validate", path] -> validate path
     ["--help"] -> usage
     _ -> do hPutStrLn stderr "Invalid command!\n\nRun with --help to see usage."
             exitWith $ ExitFailure 1

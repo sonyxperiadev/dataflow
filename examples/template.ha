@@ -26,7 +26,7 @@
     {{/data}}
 
     {{#description}}
-    <p>{{{description}}}</p>
+    <p>{{#html_linebreaks}}description{{/html_linebreaks}}</p>
     {{/description}}
   </li>
 {{/flows}}
@@ -35,7 +35,7 @@
 <h2>Threats</h2>
 
 {{#threats}}
-<p>{{{threats}}}</p>
+<p>{{#markdown}}threats{{/markdown}}</p>
 {{/threats}}
 
 </body>
