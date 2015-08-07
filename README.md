@@ -35,7 +35,6 @@ String literals are written using double quotes.
 Text blocks are special strings, enclosed in backticks, that are can span
 multiple lines in the source document. The space characters before the first
 non-space characters on each line are trimmed, regardless of the indentation.
-Linebreaks inside the text block are preserved.
 
 ```dot
 `this is
@@ -221,6 +220,40 @@ text with its Mustache-like templates.
 ```bash
 dataflow template template.ha webapp.flow > webapp.html
 ```
+
+### Built-in Functions and Values
+
+* `markdown` - Convert the attribute at the given key from Markdown to HTML.
+
+  ```mustache
+  {{#markdown}}my_markdown_attr{{/markdown}}
+  ```
+
+* `html_linebreaks` - Replace `\n` with `<br/>` elements in the attribute at
+  the given key, to retain linebreaks in HTML output.
+
+  ```mustache
+  {{#html_linebreaks}}my_formatted_attr{{/html_linebreaks}}
+  ```
+
+* `filename_without_extension` - The input `.flow` file name with no path and
+  no extension. Useful when generating graphics and text/HTML with matching
+  filenames (e.g. `my-flow.html` includes `my-flow.png`).
+
+  ```mustache
+  <img src="{{filename_without_extension}}.png" />
+  ```
+
+* `flows` - a list of all the Flow objects in the diagram. Attributes of the
+  flow is accessible inside the iteration scope.
+
+  ```mustache
+  <ol>
+  {{#flows}}
+    <li>{{description}}</li>
+  {{/flows}}
+  </ol>
+  ```
 
 For an example see [template.ha](examples/template.ha) and the output HTML in
 [webapp.html](examples/webapp.html).

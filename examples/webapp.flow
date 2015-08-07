@@ -41,10 +41,12 @@ diagram {
   analytics <- client {
     operation = "Log"
     data = "Page Navigation"
-    description = `The Google Analytics plugin sends navigation data to Google.`
+    description = `The Google Analytics plugin sends navigation
+                   data to Google.`
   }
 
-  threats = `No particular threats at this point.
+  threats = `
+    No particular threats at this point.
 
-            It's extremely safe.`
+    It's **extremely** safe.`
 }
