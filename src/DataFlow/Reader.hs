@@ -1,11 +1,12 @@
-module DataFlow.Reader {-(readDiagram, readDiagramFile)-} where
+module DataFlow.Reader where
 
 import Control.Monad
+import Data.Functor ((<$>))
+import Control.Applicative ((<*>))
 import Data.Char
 import Data.List
 import qualified Data.Map as M
 import Text.ParserCombinators.Parsec
-import Text.Parsec.Char (endOfLine)
 
 import DataFlow.Core
 
@@ -26,7 +27,7 @@ str = do
 textBlock :: Parser String
 textBlock = do
   _ <- char '`'
-  s <- anyToken `manyTill` (try $ char '`')
+  s <- anyToken `manyTill` try (char '`')
   return $ intercalate "\n" $ map (dropWhile isSpace) $ lines s
 
 inBraces :: Parser t -> Parser t
@@ -51,29 +52,7 @@ attr = do
   return (key, value)
 
 attrs :: Parser Attributes
-attrs = liftM M.fromList $ attr `sepBy` spaces
-
-data BracesDeclaration = AttrDecl (String, String) | NodeDecl Node
-
--- | Parses the contents of a braced region containing both attributes and
--- | nodes:
---
--- @
--- attr = "value"
--- node {
---   ...
--- }
--- @
-attrsAndNodes :: Parser (Attributes, [Node])
-attrsAndNodes = do
-  decls <- (try attrDecl <|> objDecl) `sepBy` spaces
-  let (pairs, nodes) = foldr iter ([], []) decls
-  return (M.fromList pairs, nodes)
-  where
-  attrDecl = liftM AttrDecl attr
-  objDecl = liftM NodeDecl node
-  iter (AttrDecl a) (as, os) =    (a : as, os    )
-  iter (NodeDecl o) (as, os) =  (as,     o : os)
+attrs = liftM M.fromList $ many (try attr)
 
 -- | Construct a parser for an node with an ID:
 --
@@ -87,22 +66,7 @@ idAndAttrsNode keyword f = do
   _ <- string keyword
   skipMany1 space
   id' <- identifier
-  skipMany space
-  a <- option M.empty $ inBraces attrs
-  spaces
-  return $ f id' a
-
--- Construct a parser for an node without an ID:
---  <keyword> {
---    ...
---  }
-attrsNode :: String -> (Attributes -> [Node] -> t) -> Parser t
-attrsNode keyword f = do
-  _ <- string keyword
-  skipMany1 space
-  (a, nodes) <- inBraces attrsAndNodes
-  spaces
-  return $ f a nodes
+  f id' <$> option M.empty (try (inBraces attrs))
 
 function :: Parser Node
 function = idAndAttrsNode "function" Function
@@ -130,25 +94,33 @@ flow = do
   arr <- arrow
   skipMany1 space
   i2 <- identifier
-  skipMany1 space
-  a <- option M.empty $ inBraces attrs
+  a <- option M.empty $ try (inBraces attrs)
   case arr of
     Back -> return $ Flow i2 i1 a
     Forward -> return $ Flow i1 i2 a
 
-boundary :: Parser Node
-boundary = attrsNode "boundary" TrustBoundary
-
 node :: Parser Node
-node =
-  try boundary
-  <|> try function
-  <|> try database
-  <|> try io
-  <|> flow
+node = do
+  n <- try function
+       <|> try database
+       <|> try io
+       <|> flow
+  spaces
+  return n
+
+boundary :: Parser RootNode
+boundary = do
+  _ <- string "boundary"
+  inBraces (TrustBoundary <$> attrs <*> many node)
+
+rootNode :: Parser RootNode
+rootNode = try (Node <$> node)
+           <|> boundary
 
 diagram :: Parser Diagram
-diagram = attrsNode "diagram" Diagram
+diagram = do
+  _ <- string "diagram"
+  inBraces (Diagram <$> attrs <*> many rootNode)
 
 readDiagram :: String -> String -> Either ParseError Diagram
 readDiagram = parse diagram

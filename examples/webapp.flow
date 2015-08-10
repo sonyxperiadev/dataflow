@@ -1,6 +1,11 @@
 diagram {
   title = "Webapp"
 
+  threats = `
+    No particular threats at this point.
+
+    It's **extremely** safe.`
+
   boundary {
     title = "Browser"
 
@@ -44,9 +49,4 @@ diagram {
     description = `The Google Analytics plugin sends navigation
                    data to Google.`
   }
-
-  threats = `
-    No particular threats at this point.
-
-    It's **extremely** safe.`
 }

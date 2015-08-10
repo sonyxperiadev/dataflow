@@ -54,7 +54,7 @@ textblock
 
 Attributes are key-value pairs for diagrams and nodes that are used by
 output renderers. Attributes are enclosed by curly brackets. For nodes that
-can contain other nodes, attributes and child nodes can be mixed.
+can contain other nodes, attributes must appear before nodes.
 
 Keys have the same rules as IDs. Values can be strings or text blocks.
 
@@ -80,7 +80,8 @@ diagram {
 #### `boundary`
 
 The `boundary` form declares a TrustBoundary node that can contain
-attributes and other nodes.
+attributes and other nodes. Boundaries are only allowed in the top-level
+diagram.
 
 ```dot
 diagram {
@@ -132,7 +133,12 @@ document.
 
 ```dot
 diagram {
-  title = ""
+  title = "Webapp"
+
+  threats = `
+    No particular threats at this point.
+
+    It's **extremely** safe.`
 
   boundary {
     title = "Browser"
@@ -158,19 +164,24 @@ diagram {
 
   client -> server {
     operation = "Request /"
+    description = `User navigates with a browser to see some content.`
   }
   server -> logs {
     operation = "Log"
     data = `The user
             IP address.`
+    description = `Logged to a ELK stack.`
   }
   server -> client {
     operation = "Response"
     data = "User Profile"
+    description = `The server responds with some HTML.`
   }
   analytics <- client {
     operation = "Log"
     data = "Page Navigation"
+    description = `The Google Analytics plugin sends navigation
+                   data to Google.`
   }
 }
 ```
