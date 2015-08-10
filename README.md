@@ -52,9 +52,9 @@ textblock
 
 #### Attributes
 
-Attributes are key-value pairs for diagrams and objects that are used by
-output renderers. Attributes are enclosed by curly brackets. For objects that
-can contain other objects, attributes and child objects can be mixed.
+Attributes are key-value pairs for diagrams and nodes that are used by
+output renderers. Attributes are enclosed by curly brackets. For nodes that
+can contain other nodes, attributes and child nodes can be mixed.
 
 Keys have the same rules as IDs. Values can be strings or text blocks.
 
@@ -69,7 +69,7 @@ Keys have the same rules as IDs. Values can be strings or text blocks.
 #### `diagram`
 
 `diagram` is the top-level form and must appear exactly once in a DataFlow
-document. It can contain attributes and objects.
+document. It can contain attributes and nodes.
 
 ```dot
 diagram {
@@ -79,8 +79,8 @@ diagram {
 
 #### `boundary`
 
-The `boundary` form declares a TrustBoundary object that can contain
-attributes and other objects.
+The `boundary` form declares a TrustBoundary node that can contain
+attributes and other nodes.
 
 ```dot
 diagram {
@@ -93,7 +93,7 @@ diagram {
 #### `io`, `function`, `database`
 
 The `io`, `function` and `database` forms declare `InputOutput`, `Function` and
-`Database` objects, respectively. The objects have IDs and they can contain
+`Database` nodes, respectively. The nodes have IDs and they can contain
 attributes. Empty attribute brackets can be omitted.
 
 ```dot
@@ -109,7 +109,7 @@ diagram {
 
 #### `->`
 
-The `->` form declares a `Flow` object between the objects referenced by their
+The `->` form declares a `Flow` node between the nodes referenced by their
 IDs. It can contain attributes. Empty attribute brackets can be omitted.
 
 Note that the arrow can be reversed as well (`<-`).
@@ -244,7 +244,7 @@ dataflow template template.ha webapp.flow > webapp.html
   <img src="{{filename_without_extension}}.png" />
   ```
 
-* `flows` - a list of all the Flow objects in the diagram. Attributes of the
+* `flows` - a list of all the Flow nodes in the diagram. Attributes of the
   flow is accessible inside the iteration scope.
 
   ```mustache

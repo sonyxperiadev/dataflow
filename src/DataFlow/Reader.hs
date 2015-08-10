@@ -53,37 +53,37 @@ attr = do
 attrs :: Parser Attributes
 attrs = liftM M.fromList $ attr `sepBy` spaces
 
-data BracesDeclaration = AttrDecl (String, String) | ObjectDecl Object
+data BracesDeclaration = AttrDecl (String, String) | NodeDecl Node
 
 -- | Parses the contents of a braced region containing both attributes and
--- | objects:
+-- | nodes:
 --
 -- @
 -- attr = "value"
--- object {
+-- node {
 --   ...
 -- }
 -- @
-attrsAndObjects :: Parser (Attributes, [Object])
-attrsAndObjects = do
+attrsAndNodes :: Parser (Attributes, [Node])
+attrsAndNodes = do
   decls <- (try attrDecl <|> objDecl) `sepBy` spaces
-  let (pairs, objs) = foldr iter ([], []) decls
-  return (M.fromList pairs, objs)
+  let (pairs, nodes) = foldr iter ([], []) decls
+  return (M.fromList pairs, nodes)
   where
   attrDecl = liftM AttrDecl attr
-  objDecl = liftM ObjectDecl object
+  objDecl = liftM NodeDecl node
   iter (AttrDecl a) (as, os) =    (a : as, os    )
-  iter (ObjectDecl o) (as, os) =  (as,     o : os)
+  iter (NodeDecl o) (as, os) =  (as,     o : os)
 
--- | Construct a parser for an object with an ID:
+-- | Construct a parser for an node with an ID:
 --
 -- @
 -- \<keyword\> \<id\> {
 --   ...
 -- }
 -- @
-idAndAttrsObject :: String -> (ID -> Attributes -> t) -> Parser t
-idAndAttrsObject keyword f = do
+idAndAttrsNode :: String -> (ID -> Attributes -> t) -> Parser t
+idAndAttrsNode keyword f = do
   _ <- string keyword
   skipMany1 space
   id' <- identifier
@@ -92,26 +92,26 @@ idAndAttrsObject keyword f = do
   spaces
   return $ f id' a
 
--- Construct a parser for an object without an ID:
+-- Construct a parser for an node without an ID:
 --  <keyword> {
 --    ...
 --  }
-attrsObject :: String -> (Attributes -> [Object] -> t) -> Parser t
-attrsObject keyword f = do
+attrsNode :: String -> (Attributes -> [Node] -> t) -> Parser t
+attrsNode keyword f = do
   _ <- string keyword
   skipMany1 space
-  (a, objs) <- inBraces attrsAndObjects
+  (a, nodes) <- inBraces attrsAndNodes
   spaces
-  return $ f a objs
+  return $ f a nodes
 
-function :: Parser Object
-function = idAndAttrsObject "function" Function
+function :: Parser Node
+function = idAndAttrsNode "function" Function
 
-database :: Parser Object
-database = idAndAttrsObject "database" Database
+database :: Parser Node
+database = idAndAttrsNode "database" Database
 
-io :: Parser Object
-io = idAndAttrsObject "io" InputOutput
+io :: Parser Node
+io = idAndAttrsNode "io" InputOutput
 
 data FlowType = Back | Forward
 
@@ -123,7 +123,7 @@ arrow = do
     "<-" -> return Back
     _ -> fail "Invalid flow statement"
 
-flow :: Parser Object
+flow :: Parser Node
 flow = do
   i1 <- identifier
   skipMany1 space
@@ -136,11 +136,11 @@ flow = do
     Back -> return $ Flow i2 i1 a
     Forward -> return $ Flow i1 i2 a
 
-boundary :: Parser Object
-boundary = attrsObject "boundary" TrustBoundary
+boundary :: Parser Node
+boundary = attrsNode "boundary" TrustBoundary
 
-object :: Parser Object
-object =
+node :: Parser Node
+node =
   try boundary
   <|> try function
   <|> try database
@@ -148,7 +148,7 @@ object =
   <|> flow
 
 diagram :: Parser Diagram
-diagram = attrsObject "diagram" Diagram
+diagram = attrsNode "diagram" Diagram
 
 readDiagram :: String -> String -> Either ParseError Diagram
 readDiagram = parse diagram

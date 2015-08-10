@@ -40,7 +40,7 @@ spec =
       in input `shouldReadAsDiagram` Diagram M.empty [
           TrustBoundary M.empty []
         ]
-    it "reads diagram with trust boundary and nested objects" $
+    it "reads diagram with trust boundary and nested nodes" $
       let input = unlines [
                             "diagram {",
                             "  boundary {",
@@ -122,7 +122,7 @@ spec =
       in input `shouldReadAsDiagram` Diagram M.empty [
           InputOutput "baz" (M.fromList [("title", "foo"), ("description", "bar")])
         ]
-    it "reads attributes and objects" $
+    it "reads attributes and nodes" $
       let input = unlines [
                             "diagram {",
                             "  name = \"bar\"",
@@ -158,3 +158,12 @@ spec =
       in input `shouldReadAsDiagram` Diagram M.empty [
           Flow "foo" "bar" (M.singleton "description" "Hello,\n\"evil\"\nworld!")
         ]
+    it "does only allow flows in top-level diagram node" $
+      let input = unlines [
+                            "diagram {",
+                            "  boundary {",
+                            "     a -> b",
+                            "  }",
+                            "}"
+                          ]
+      in shouldFailReadAsDiagram input
