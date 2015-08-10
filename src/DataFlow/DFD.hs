@@ -85,7 +85,11 @@ convertNode (C.Database id' attrs) = return [
     ]
   ]
 
-convertNode (C.Flow i1 i2 attrs) = do
+convertNodes :: [C.Node] -> DFD StmtList
+convertNodes = liftM concat . mapM convertNode
+
+convertFlow :: C.Flow -> DFD StmtList
+convertFlow (C.Flow i1 i2 attrs) = do
     s <- nextStep
     let stepStr = color "#3184e4" $ bold $ printf "(%d) " s
     let text = case (M.lookup "operation" attrs, M.lookup "data" attrs) of
@@ -101,11 +105,10 @@ convertNode (C.Flow i1 i2 attrs) = do
         ]
       ]
 
-convertNodes :: [C.Node] -> DFD StmtList
-convertNodes = liftM concat . mapM convertNode
+convertFlows :: [C.Flow] -> DFD StmtList
+convertFlows = liftM concat . mapM convertFlow
 
 convertRootNode :: C.RootNode -> DFD StmtList
-
 convertRootNode (C.TrustBoundary attrs nodes) = do
   nodeStmts <- convertNodes nodes
   id' <- nextClusterID
@@ -150,15 +153,16 @@ defaultGraphStmts = [
 
 
 convertDiagram :: C.Diagram -> DFD Graph
-convertDiagram (C.Diagram attrs rootNodes) = do
-  nodes <- convertRootNodes rootNodes
+convertDiagram (C.Diagram attrs rootNodes flows) = do
+  n <- convertRootNodes rootNodes
+  f <- convertFlows flows
   return $ case M.lookup "title" attrs of
               Just title ->
                 let lbl = EqualsStmt "label" (inAngleBrackets $ bold title)
-                    stmts = lbl : defaultGraphStmts ++ nodes
+                    stmts = lbl : defaultGraphStmts ++ n ++ f
                 in normalize $ Digraph (inQuotes title) stmts
               Nothing ->
-                normalize $ Digraph "Untitled" $ defaultGraphStmts ++ nodes
+                normalize $ Digraph "Untitled" $ defaultGraphStmts ++ n ++ f
 
 asDFD :: C.Diagram -> Graph
 asDFD d = evalState (convertDiagram d) DFDState { step = 0, clusterID = 0 }

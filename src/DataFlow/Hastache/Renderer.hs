@@ -39,16 +39,15 @@ mkContextWithDefaults attrs f =
         (Just s) -> replace "\n" "<br/>" s
         _ -> ""
 
-mkFlowContext :: RootNode -> [MuContext IO]
-mkFlowContext (Node (Flow _ _ attrs)) = [mkContextWithDefaults attrs (const MuNothing)]
-mkFlowContext _ = []
+mkFlowContext :: Flow -> MuContext IO
+mkFlowContext (Flow _ _ attrs) = mkContextWithDefaults attrs (const MuNothing)
 
 mkDiagramContext :: FilePath -> Diagram -> MuContext IO
-mkDiagramContext fp (Diagram attrs nodes) =
+mkDiagramContext fp (Diagram attrs _ flows) =
   mkContextWithDefaults attrs ctx
   where
   ctx "filename_without_extension" = MuVariable $ dropExtension $ takeFileName fp
-  ctx "flows" = MuList $ concatMap mkFlowContext nodes
+  ctx "flows" = MuList $ map mkFlowContext flows
   ctx _ = MuNothing
 
 renderTemplate :: String -> FilePath -> Diagram -> IO TL.Text
