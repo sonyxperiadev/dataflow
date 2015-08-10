@@ -3,6 +3,7 @@ module DataFlow.Core (
   Attributes,
   Diagram(..),
   RootNode(..),
+  Flow(..),
   Node(..)
   ) where
 
@@ -14,7 +15,7 @@ type ID = String
 type Attributes = M.Map String String
 
 -- | The top level diagram.
-data Diagram = Diagram Attributes [RootNode]
+data Diagram = Diagram Attributes [RootNode] [Flow]
                deriving (Eq, Show)
 
 -- | An root node in a diagram.
@@ -32,6 +33,8 @@ data Node =
             | Function ID Attributes
             -- | A \"Database\" in DFD.
             | Database ID Attributes
-            -- | Describes the flow of data between two nodes.
-            | Flow ID ID Attributes
+            deriving (Show, Eq)
+
+-- | Describes the flow of data between two nodes.
+data Flow = Flow ID ID Attributes
             deriving (Show, Eq)
