@@ -58,9 +58,9 @@ color :: String -> String -> String
 color _ "" = ""
 color c s = printf "<font color=\"%s\">%s</font>" c s
 
-convertObject :: C.Object -> DFD StmtList
+convertNode :: C.Node -> DFD StmtList
 
-convertObject (C.InputOutput id' attrs) = return [
+convertNode (C.InputOutput id' attrs) = return [
     NodeStmt id' [
       Attr "shape" "square",
       Attr "style" "bold",
@@ -70,8 +70,8 @@ convertObject (C.InputOutput id' attrs) = return [
     ]
   ]
 
-convertObject (C.TrustBoundary attrs objects) = do
-  objectStmts <- convertObjects objects
+convertNode (C.TrustBoundary attrs nodes) = do
+  nodeStmts <- convertNodes nodes
   id' <- nextClusterID
   let sgId = "cluster_" ++ show id'
       defaultSgAttrs = [
@@ -83,17 +83,17 @@ convertObject (C.TrustBoundary attrs objects) = do
                   Just title -> defaultSgAttrs ++ [label $ italic title]
                   Nothing -> defaultSgAttrs
       sgAttrStmt = AttrStmt Graph sgAttrs
-      stmts = sgAttrStmt : objectStmts
+      stmts = sgAttrStmt : nodeStmts
   return [SubgraphStmt $ Subgraph sgId stmts]
 
-convertObject (C.Function id' attrs) = return [
+convertNode (C.Function id' attrs) = return [
     NodeStmt id' [
       Attr "shape" "circle",
       label $ bold $ getTitleOrBlank attrs
     ]
   ]
 
-convertObject (C.Database id' attrs) = return [
+convertNode (C.Database id' attrs) = return [
     NodeStmt id' [
       Attr "shape" "none",
       label $ printf "<table sides=\"TB\" cellborder=\"0\"><tr><td>%s</td></tr></table>"
@@ -101,7 +101,7 @@ convertObject (C.Database id' attrs) = return [
     ]
   ]
 
-convertObject (C.Flow i1 i2 attrs) = do
+convertNode (C.Flow i1 i2 attrs) = do
     s <- nextStep
     let stepStr = color "#3184e4" $ bold $ printf "(%d) " s
     let text = case (M.lookup "operation" attrs, M.lookup "data" attrs) of
@@ -117,8 +117,8 @@ convertObject (C.Flow i1 i2 attrs) = do
         ]
       ]
 
-convertObjects :: [C.Object] -> DFD StmtList
-convertObjects = liftM concat . mapM convertObject
+convertNodes :: [C.Node] -> DFD StmtList
+convertNodes = liftM concat . mapM convertNode
 
 defaultGraphStmts :: StmtList
 defaultGraphStmts = [
@@ -143,15 +143,15 @@ defaultGraphStmts = [
 
 convertDiagram :: C.Diagram -> DFD Graph
 
-convertDiagram (C.Diagram attrs objects) = do
-  objs <- convertObjects objects
+convertDiagram (C.Diagram attrs nodes) = do
+  nodes <- convertNodes nodes
   return $ case M.lookup "title" attrs of
               Just title ->
                 let lbl = EqualsStmt "label" (inAngleBrackets $ bold title)
-                    stmts = lbl : defaultGraphStmts ++ objs
+                    stmts = lbl : defaultGraphStmts ++ nodes
                 in normalize $ Digraph (inQuotes title) stmts
               Nothing ->
-                normalize $ Digraph "Untitled" $ defaultGraphStmts ++ objs
+                normalize $ Digraph "Untitled" $ defaultGraphStmts ++ nodes
 
 asDFD :: C.Diagram -> Graph
 asDFD d = evalState (convertDiagram d) DFDState { step = 0, clusterID = 0 }

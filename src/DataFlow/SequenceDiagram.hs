@@ -22,16 +22,16 @@ italic s =
   join "\\n" $ map italic' $ split "\\n" s
   where italic' = printf "<i>%s</i>"
 
-convertObject :: C.Object -> Stmt
-convertObject (C.InputOutput id' attrs) =
+convertNode :: C.Node -> Stmt
+convertNode (C.InputOutput id' attrs) =
   Entity id' $ convertNewline $ getTitleOrBlank attrs
-convertObject (C.TrustBoundary attrs objects) =
-  Box (convertNewline $ M.findWithDefault "Untitled" "title" attrs) $ map convertObject objects
-convertObject (C.Function id' attrs) =
+convertNode (C.TrustBoundary attrs nodes) =
+  Box (convertNewline $ M.findWithDefault "Untitled" "title" attrs) $ map convertNode nodes
+convertNode (C.Function id' attrs) =
   Participant id' $ convertNewline $ getTitleOrBlank attrs
-convertObject (C.Database id' attrs) =
+convertNode (C.Database id' attrs) =
   Database id' $ convertNewline $ getTitleOrBlank attrs
-convertObject (C.Flow i1 i2 attrs) =
+convertNode (C.Flow i1 i2 attrs) =
   let p = (convertNewline (bold $ M.findWithDefault "" "operation" attrs),
            italic $ convertNewline (M.findWithDefault "" "data" attrs))
       s = case p of
@@ -83,5 +83,5 @@ defaultSkinParams = [
   ]
 
 asSequenceDiagram :: C.Diagram -> Diagram
-asSequenceDiagram (C.Diagram _ objects) =
-  SequenceDiagram $ defaultSkinParams ++ map convertObject objects
+asSequenceDiagram (C.Diagram _ nodes) =
+  SequenceDiagram $ defaultSkinParams ++ map convertNode nodes
