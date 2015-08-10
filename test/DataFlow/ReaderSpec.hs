@@ -60,7 +60,7 @@ spec =
                             "}"
                           ]
       in input `shouldReadAsDiagram` Diagram M.empty [
-          Function "server" M.empty
+          Node $ Function "server" M.empty
         ]
     it "reads diagram with database" $
       let input = unlines [
@@ -69,7 +69,7 @@ spec =
                             "}"
                           ]
       in input `shouldReadAsDiagram` Diagram M.empty [
-          Database "dynamo" M.empty
+          Node $ Database "dynamo" M.empty
         ]
     it "reads diagram with io" $
       let input = unlines [
@@ -78,7 +78,7 @@ spec =
                             "}"
                           ]
       in input `shouldReadAsDiagram` Diagram M.empty [
-          InputOutput "analytics" M.empty
+          Node $ InputOutput "analytics" M.empty
         ]
     it "reads diagram with flow" $
       let input = unlines [
@@ -87,7 +87,7 @@ spec =
                             "}"
                           ]
       in input `shouldReadAsDiagram` Diagram M.empty [
-          Flow "a" "b" M.empty
+          Node $ Flow "a" "b" M.empty
         ]
     it "does not allow multiline string" $
       let input = unlines [
@@ -109,7 +109,7 @@ spec =
                             "}"
                           ]
       in input `shouldReadAsDiagram` Diagram M.empty [
-          InputOutput "baz" (M.fromList [("title", "foo"), ("description", "bar")])
+          Node $ InputOutput "baz" (M.fromList [("title", "foo"), ("description", "bar")])
         ]
     it "reads multiple attributes on a single line" $
       let input = unlines [
@@ -120,7 +120,7 @@ spec =
                             "}"
                           ]
       in input `shouldReadAsDiagram` Diagram M.empty [
-          InputOutput "baz" (M.fromList [("title", "foo"), ("description", "bar")])
+          Node $ InputOutput "baz" (M.fromList [("title", "foo"), ("description", "bar")])
         ]
     it "reads attributes and nodes" $
       let input = unlines [
@@ -132,7 +132,7 @@ spec =
                             "}"
                           ]
       in input `shouldReadAsDiagram` Diagram (M.singleton "name" "bar") [
-          InputOutput "baz" (M.singleton "title" "foo")
+          Node $ InputOutput "baz" (M.singleton "title" "foo")
         ]
     it "reads flow with attributes" $
       let input = unlines [
@@ -143,7 +143,7 @@ spec =
                             "}"
                           ]
       in input `shouldReadAsDiagram` Diagram M.empty [
-          Flow "foo" "bar" (M.singleton "title" "baz")
+          Node $ Flow "foo" "bar" (M.singleton "title" "baz")
         ]
     it "reads text blocks" $
       let input = unlines [
@@ -156,13 +156,13 @@ spec =
                             "}"
                           ]
       in input `shouldReadAsDiagram` Diagram M.empty [
-          Flow "foo" "bar" (M.singleton "description" "Hello,\n\"evil\"\nworld!")
+          Node $ Flow "foo" "bar" (M.singleton "description" "Hello,\n\"evil\"\nworld!")
         ]
-    it "does only allow flows in top-level diagram node" $
+    it "only allows boundaries in top-level diagram" $
       let input = unlines [
                             "diagram {",
                             "  boundary {",
-                            "     a -> b",
+                            "     boundary {}",
                             "  }",
                             "}"
                           ]

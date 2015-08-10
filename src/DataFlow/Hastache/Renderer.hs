@@ -2,7 +2,6 @@
 module DataFlow.Hastache.Renderer (renderTemplate) where
 
 import Data.List.Utils
-import Data.Functor ((<$>))
 import qualified Data.Map as M
 import qualified Data.Text as T
 import qualified Data.Text.Lazy as TL
@@ -40,8 +39,8 @@ mkContextWithDefaults attrs f =
         (Just s) -> replace "\n" "<br/>" s
         _ -> ""
 
-mkFlowContext :: Node -> [MuContext IO]
-mkFlowContext (Flow _ _ attrs) = [mkContextWithDefaults attrs (const MuNothing)]
+mkFlowContext :: RootNode -> [MuContext IO]
+mkFlowContext (Node (Flow _ _ attrs)) = [mkContextWithDefaults attrs (const MuNothing)]
 mkFlowContext _ = []
 
 mkDiagramContext :: FilePath -> Diagram -> MuContext IO

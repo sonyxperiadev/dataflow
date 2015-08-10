@@ -25,8 +25,6 @@ italic s =
 convertNode :: C.Node -> Stmt
 convertNode (C.InputOutput id' attrs) =
   Entity id' $ convertNewline $ getTitleOrBlank attrs
-convertNode (C.TrustBoundary attrs nodes) =
-  Box (convertNewline $ M.findWithDefault "Untitled" "title" attrs) $ map convertNode nodes
 convertNode (C.Function id' attrs) =
   Participant id' $ convertNewline $ getTitleOrBlank attrs
 convertNode (C.Database id' attrs) =
@@ -40,6 +38,11 @@ convertNode (C.Flow i1 i2 attrs) =
             (o, "") -> o
             (o, d) -> o ++ "\\n" ++ d
   in Edge i1 i2 s
+
+convertRootNode :: C.RootNode -> Stmt
+convertRootNode (C.TrustBoundary attrs nodes) =
+  Box (convertNewline $ M.findWithDefault "Untitled" "title" attrs) $ map convertNode nodes
+convertRootNode (C.Node n) = convertNode n
 
 defaultSkinParams :: [Stmt]
 defaultSkinParams = [
@@ -83,5 +86,5 @@ defaultSkinParams = [
   ]
 
 asSequenceDiagram :: C.Diagram -> Diagram
-asSequenceDiagram (C.Diagram _ nodes) =
-  SequenceDiagram $ defaultSkinParams ++ map convertNode nodes
+asSequenceDiagram (C.Diagram _ rootNodes) =
+  SequenceDiagram $ defaultSkinParams ++ map convertRootNode rootNodes

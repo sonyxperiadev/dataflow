@@ -70,22 +70,6 @@ convertNode (C.InputOutput id' attrs) = return [
     ]
   ]
 
-convertNode (C.TrustBoundary attrs nodes) = do
-  nodeStmts <- convertNodes nodes
-  id' <- nextClusterID
-  let sgId = "cluster_" ++ show id'
-      defaultSgAttrs = [
-          Attr "fontsize" "10",
-          Attr "fontcolor" "grey35",
-          Attr "style" "dashed",
-          Attr "color" "grey35"]
-      sgAttrs = case getTitle attrs of
-                  Just title -> defaultSgAttrs ++ [label $ italic title]
-                  Nothing -> defaultSgAttrs
-      sgAttrStmt = AttrStmt Graph sgAttrs
-      stmts = sgAttrStmt : nodeStmts
-  return [SubgraphStmt $ Subgraph sgId stmts]
-
 convertNode (C.Function id' attrs) = return [
     NodeStmt id' [
       Attr "shape" "circle",
@@ -120,6 +104,29 @@ convertNode (C.Flow i1 i2 attrs) = do
 convertNodes :: [C.Node] -> DFD StmtList
 convertNodes = liftM concat . mapM convertNode
 
+convertRootNode :: C.RootNode -> DFD StmtList
+
+convertRootNode (C.TrustBoundary attrs nodes) = do
+  nodeStmts <- convertNodes nodes
+  id' <- nextClusterID
+  let sgId = "cluster_" ++ show id'
+      defaultSgAttrs = [
+          Attr "fontsize" "10",
+          Attr "fontcolor" "grey35",
+          Attr "style" "dashed",
+          Attr "color" "grey35"]
+      sgAttrs = case getTitle attrs of
+                  Just title -> defaultSgAttrs ++ [label $ italic title]
+                  Nothing -> defaultSgAttrs
+      sgAttrStmt = AttrStmt Graph sgAttrs
+      stmts = sgAttrStmt : nodeStmts
+  return [SubgraphStmt $ Subgraph sgId stmts]
+
+convertRootNode (C.Node n) = convertNode n
+
+convertRootNodes :: [C.RootNode] -> DFD StmtList
+convertRootNodes = liftM concat . mapM convertRootNode
+
 defaultGraphStmts :: StmtList
 defaultGraphStmts = [
     AttrStmt Graph [
@@ -141,10 +148,10 @@ defaultGraphStmts = [
     EqualsStmt "rankdir" "t"
   ]
 
-convertDiagram :: C.Diagram -> DFD Graph
 
-convertDiagram (C.Diagram attrs nodes) = do
-  nodes <- convertNodes nodes
+convertDiagram :: C.Diagram -> DFD Graph
+convertDiagram (C.Diagram attrs rootNodes) = do
+  nodes <- convertRootNodes rootNodes
   return $ case M.lookup "title" attrs of
               Just title ->
                 let lbl = EqualsStmt "label" (inAngleBrackets $ bold title)
