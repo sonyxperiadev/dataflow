@@ -14,6 +14,8 @@ ENV PATH /root/.cabal/bin:/opt/cabal/1.20/bin:/opt/ghc/7.8.4/bin:/opt/happy/1.19
 
 ## DATAFLOW
 
+ENV LANG C.UTF-8
+
 ADD . /usr/local/dataflow
 WORKDIR /usr/local/dataflow
 RUN cabal update && \
