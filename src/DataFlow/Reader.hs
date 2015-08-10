@@ -87,7 +87,7 @@ arrow = do
     "<-" -> return Back
     _ -> fail "Invalid flow statement"
 
-flow :: Parser Node
+flow :: Parser Flow
 flow = do
   i1 <- identifier
   skipMany1 space
@@ -103,8 +103,7 @@ node :: Parser Node
 node = do
   n <- try function
        <|> try database
-       <|> try io
-       <|> flow
+       <|> io
   spaces
   return n
 
@@ -120,7 +119,7 @@ rootNode = try (Node <$> node)
 diagram :: Parser Diagram
 diagram = do
   _ <- string "diagram"
-  inBraces (Diagram <$> attrs <*> many rootNode)
+  inBraces (Diagram <$> attrs <*> many rootNode <*> many flow)
 
 readDiagram :: String -> String -> Either ParseError Diagram
 readDiagram = parse diagram

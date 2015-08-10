@@ -91,7 +91,7 @@ diagram {
 }
 ```
 
-#### `io`, `function`, `database`
+#### nodes: `io`, `function`, `database`
 
 The `io`, `function` and `database` forms declare `InputOutput`, `Function` and
 `Database` nodes, respectively. The nodes have IDs and they can contain
@@ -110,8 +110,9 @@ diagram {
 
 #### `->`
 
-The `->` form declares a `Flow` node between the nodes referenced by their
+The `->` form declares a `Flow` between the nodes referenced by their
 IDs. It can contain attributes. Empty attribute brackets can be omitted.
+Flows must be declared after all nodes.
 
 Note that the arrow can be reversed as well (`<-`).
 

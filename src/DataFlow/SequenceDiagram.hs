@@ -29,7 +29,9 @@ convertNode (C.Function id' attrs) =
   Participant id' $ convertNewline $ getTitleOrBlank attrs
 convertNode (C.Database id' attrs) =
   Database id' $ convertNewline $ getTitleOrBlank attrs
-convertNode (C.Flow i1 i2 attrs) =
+
+convertFlow :: C.Flow -> Stmt
+convertFlow (C.Flow i1 i2 attrs) =
   let p = (convertNewline (bold $ M.findWithDefault "" "operation" attrs),
            italic $ convertNewline (M.findWithDefault "" "data" attrs))
       s = case p of
@@ -86,5 +88,7 @@ defaultSkinParams = [
   ]
 
 asSequenceDiagram :: C.Diagram -> Diagram
-asSequenceDiagram (C.Diagram _ rootNodes) =
-  SequenceDiagram $ defaultSkinParams ++ map convertRootNode rootNodes
+asSequenceDiagram (C.Diagram _ rootNodes flows) =
+  SequenceDiagram $ defaultSkinParams 
+                    ++ map convertRootNode rootNodes 
+                    ++ map convertFlow flows
