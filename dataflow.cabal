@@ -44,9 +44,11 @@ library
     DataFlow.PlantUML.Renderer,
     DataFlow.SequenceDiagram,
     DataFlow.DFD,
-    DataFlow.Hastache.Renderer
+    DataFlow.Hastache.Renderer,
+    DataFlow.JSONGraphFormat,
+    DataFlow.JSONGraphFormat.Renderer
   build-depends:
-    base >=4 && <4.8,
+    base >=4,
     mtl >=2.2,
     containers >= 0.4,
     MissingH,
@@ -55,15 +57,19 @@ library
     text >= 1.0,
     blaze-html >= 0.8.0.2,
     markdown >= 0.1.13.2,
-    hastache >= 0.6.1
+    hastache >= 0.6.1,
+    bytestring >= 0.10,
+    vector >= 0.11,
+    aeson >= 0.9.0.1
   hs-source-dirs:      src
   default-language:    Haskell2010
 
 executable dataflow
   main-is: Main.hs
   build-depends:
-    base >=4 && <4.8,
+    base >=4,
     text >= 1.0,
+    bytestring >= 0.10,
     dataflow
   hs-source-dirs:      cli
   default-language:    Haskell2010
@@ -79,5 +85,8 @@ test-suite spec
     parsec >= 3.1.9,
     HUnit,
     hspec == 2.*,
+    vector >= 0.11,
+    aeson >= 0.9.0.1,
+    bytestring >= 0.10,
     dataflow
   ghc-options: -Wall

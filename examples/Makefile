@@ -3,6 +3,7 @@ DFD_TARGETS=$(SOURCES:%.flow=%.dfd.png)
 SEQ_TARGETS=$(SOURCES:%.flow=%.seq.png)
 HTML_TARGETS=$(SOURCES:%.flow=%.html)
 HTML_TEMPLATE=template.ha
+JSON_TARGETS=$(SOURCES:%.flow=%.json)
 DATAFLOW=../dist/build/DataFlow/dataflow
 PLANTUML=/tmp/dataflow-build/plantuml.jar
 
@@ -25,11 +26,17 @@ $(PLANTUML):
 	@echo "$< -> $@"
 	@$(DATAFLOW) template $(HTML_TEMPLATE) $< > $@
 
+%.json: %.flow $(DATAFLOW)
+	@echo "$< -> $@"
+	@$(DATAFLOW) json $< > $@
+
 png: $(DFD_TARGETS) $(SEQ_TARGETS)
 
 html: $(HTML_TARGETS)
 
+json: $(JSON_TARGETS)
+
 clean:
 	rm -f $(DFD_TARGETS) $(SEQ_TARGETS)
 
-all: png html
+all: png html json
