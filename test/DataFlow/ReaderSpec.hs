@@ -184,3 +184,16 @@ spec =
                             "}"
                           ]
       in shouldFailReadAsDiagram input
+    it "can read first flow with id starting with b (conflicting with boundary)" $
+      let input = unlines [
+                            "diagram {",
+                            "  boundary {}",
+                            "  bar -> baz {",
+                            "  }",
+                            "}"
+                          ]
+      in input `shouldReadAsDiagram` Diagram M.empty [
+          TrustBoundary M.empty []
+        ] [
+          Flow "bar" "baz" M.empty
+        ]

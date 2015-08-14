@@ -119,7 +119,7 @@ rootNode = try (Node <$> node)
 diagram :: Parser Diagram
 diagram = do
   _ <- string "diagram"
-  inBraces (Diagram <$> attrs <*> many rootNode <*> many flow)
+  inBraces (Diagram <$> attrs <*> many (try rootNode) <*> many flow)
 
 readDiagram :: String -> String -> Either ParseError Diagram
 readDiagram = parse diagram
