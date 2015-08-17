@@ -1,4 +1,8 @@
-module DataFlow.Reader where
+module DataFlow.Reader (
+    document,
+    readDiagram,
+    readDiagramFile
+) where
 
 import Control.Monad
 import Data.Functor ((<$>))
@@ -9,6 +13,17 @@ import qualified Data.Map as M
 import Text.ParserCombinators.Parsec
 
 import DataFlow.Core
+
+commentsAndSpace :: Parser ()
+commentsAndSpace = do
+  spaces
+  skipMany comment
+  spaces
+  where
+  comment = do
+    _ <- string "/*"
+    _ <- manyTill anyChar (try $ string "*/")
+    return ()
 
 identifier :: Parser ID
 identifier = do
@@ -32,13 +47,13 @@ textBlock = do
 
 inBraces :: Parser t -> Parser t
 inBraces inside = do
-  spaces
+  commentsAndSpace
   _ <- char '{'
-  spaces
+  commentsAndSpace
   c <- inside
-  spaces
+  commentsAndSpace
   _ <- char '}'
-  spaces
+  commentsAndSpace
   return c
 
 attr :: Parser (String, String)
@@ -48,7 +63,7 @@ attr = do
   _ <- char '='
   skipMany1 $ char ' '
   value <- try textBlock <|> str
-  spaces
+  commentsAndSpace
   return (key, value)
 
 attrs :: Parser Attributes
@@ -104,7 +119,7 @@ node = do
   n <- try function
        <|> try database
        <|> io
-  spaces
+  commentsAndSpace
   return n
 
 boundary :: Parser RootNode
@@ -117,12 +132,14 @@ rootNode = try (Node <$> node)
            <|> boundary
 
 diagram :: Parser Diagram
-diagram = do
-  _ <- string "diagram"
-  inBraces (Diagram <$> attrs <*> many (try rootNode) <*> many flow)
+diagram =
+  string "diagram" *> inBraces (Diagram <$> attrs <*> many (try rootNode) <*> many flow)
+
+document :: Parser Diagram
+document = commentsAndSpace *> diagram <* commentsAndSpace
 
 readDiagram :: String -> String -> Either ParseError Diagram
-readDiagram = parse diagram
+readDiagram = parse document
 
 readDiagramFile :: FilePath -> IO (Either ParseError Diagram)
-readDiagramFile = parseFromFile diagram
+readDiagramFile = parseFromFile document

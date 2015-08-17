@@ -1,6 +1,7 @@
 diagram {
   title = "Webapp"
 
+  /* Some comment about this... */
   threats = `
     No particular threats at this point.
 
