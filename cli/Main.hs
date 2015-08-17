@@ -7,6 +7,8 @@ import qualified Data.ByteString.Lazy.Char8 as BC
 import qualified Data.Text.Lazy.IO as TL
 
 import DataFlow.Reader
+import DataFlow.Core
+import qualified DataFlow.Validation as V
 import qualified DataFlow.DFD as DFD
 import qualified DataFlow.SequenceDiagram as SEQ
 import qualified DataFlow.Graphviz.Renderer as GVR
@@ -29,40 +31,50 @@ usage = hPutStrLn stderr $ unlines [
     "All commands print to stdout."
   ]
 
-dfd :: FilePath -> IO ()
-dfd path = do
+showErrors :: Show s => Either [s] v -> Either String v
+showErrors = either (Left . unlines . map show) Right
+
+readAndValidate :: FilePath -> IO (Either String Diagram)
+readAndValidate path = do
   res <- readDiagramFile path
   case res of
-    (Left err) -> print err
+    (Left err) -> return $ Left $ show err
+    (Right d) -> return (showErrors $ V.validate d)
+
+dfd :: FilePath -> IO ()
+dfd path = do
+  res <- readAndValidate path
+  case res of
+    (Left err) -> putStrLn err
     (Right d) -> putStr $ GVR.renderGraphviz $ DFD.asDFD d
 
 seq' :: FilePath -> IO ()
 seq' path = do
-  res <- readDiagramFile path
+  res <- readAndValidate path
   case res of
-    (Left err) -> print err
+    (Left err) -> putStrLn err
     (Right d) -> putStr $ PUR.renderPlantUML $ SEQ.asSequenceDiagram d
 
 template :: FilePath -> FilePath -> IO ()
 template tmplPath path = do
-  res <- readDiagramFile path
+  res <- readAndValidate path
   tmplStr <- readFile tmplPath
   case res of
-    (Left err) -> print err
+    (Left err) -> putStrLn err
     (Right d) -> HR.renderTemplate tmplStr path d >>= TL.putStr
 
 json :: FilePath -> IO ()
 json path = do
-  res <- readDiagramFile path
+  res <- readAndValidate path
   case res of
-    (Left err) -> print err
+    (Left err) -> putStrLn err
     (Right d) -> BC.putStrLn $ JG.renderJSONGraph d
 
 validate :: FilePath -> IO ()
 validate path = do
-  res <- readDiagramFile path
+  res <- readAndValidate path
   case res of
-    (Left err) -> print err
+    (Left err) -> putStrLn err
     (Right _) -> return ()
 
 main :: IO ()
