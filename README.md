@@ -127,6 +127,19 @@ diagram {
 }
 ```
 
+#### Comment
+
+Comments are written using `/*` and `*/` and are ignored by the Reader. They're
+only used for human consumption.
+
+```dot
+diagram {
+  /* I can write
+   * whatever I
+   * want in here! */
+}
+```
+
 ## Example
 
 The image from the top of this README is rendered from the following DataFlow
@@ -136,6 +149,7 @@ document.
 diagram {
   title = "Webapp"
 
+  /* Some comment about this... */
   threats = `
     No particular threats at this point.
 

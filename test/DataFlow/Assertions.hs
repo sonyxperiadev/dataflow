@@ -27,7 +27,7 @@ shouldReadAs p s expected =
   either (parseFailure s expected) (checkEquality expected) (parse p "test input" s)
 
 shouldReadAsDiagram :: String -> Diagram -> Expectation
-s `shouldReadAsDiagram` expected = shouldReadAs diagram s expected
+s `shouldReadAsDiagram` expected = shouldReadAs document s expected
 
 shouldFailReadAs :: (Eq a, Show a) => Parser a -> String -> Expectation
 shouldFailReadAs p s =
@@ -38,5 +38,5 @@ shouldFailReadAs p s =
             printf "Expected read to fail, but got: %s" (show d)
 
 shouldFailReadAsDiagram :: String -> Expectation
-shouldFailReadAsDiagram = shouldFailReadAs diagram
+shouldFailReadAsDiagram = shouldFailReadAs document
 

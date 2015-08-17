@@ -197,3 +197,20 @@ spec =
         ] [
           Flow "bar" "baz" M.empty
         ]
+    it "ignores comments" $
+      let input = unlines [
+                            "diagram {",
+                            "  /* Yes, comments!",
+                            "   * Yes, more comments!",
+                            "   * Yes, even more comments! */",
+                            "}"
+                          ]
+      in input `shouldReadAsDiagram` Diagram M.empty [] []
+    it "ignores comments outside diagram" $
+      let input = unlines [
+                            "/* Header */",
+                            "diagram {",
+                            "}",
+                            "/* Footer */"
+                          ]
+      in input `shouldReadAsDiagram` Diagram M.empty [] []
