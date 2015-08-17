@@ -6,7 +6,7 @@
 diagram {
   title = "Legend"
 
-  boundary {
+  boundary my_boundary {
     title = "A boundary"
 
     function f {

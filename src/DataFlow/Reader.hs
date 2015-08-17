@@ -125,7 +125,9 @@ node = do
 boundary :: Parser RootNode
 boundary = do
   _ <- string "boundary"
-  inBraces (TrustBoundary <$> attrs <*> many node)
+  skipMany1 space
+  id' <- identifier
+  inBraces (TrustBoundary id' <$> attrs <*> many node)
 
 rootNode :: Parser RootNode
 rootNode = try (Node <$> node)

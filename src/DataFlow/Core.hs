@@ -23,7 +23,7 @@ data RootNode =
               -- | A top level Node.
               Node Node
               -- | Surrounds other non-root nodes, denoting a boundary.
-              | TrustBoundary Attributes [Node]
+              | TrustBoundary ID Attributes [Node]
               deriving (Eq, Show)
 
 data Node =

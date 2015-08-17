@@ -10,27 +10,17 @@ import DataFlow.Attributes
 import DataFlow.Graphviz
 import DataFlow.Graphviz.EdgeNormalization
 
-data DFDState = DFDState { step :: Int, clusterID :: Int }
+type DFDState = Int
 type DFD v = State DFDState v
 
 incrStep :: DFD ()
-incrStep = modify f
-  where f s = DFDState (step s + 1) (clusterID s)
-
-incrClusterID :: DFD ()
-incrClusterID = modify f
-  where f s = DFDState (step s) (clusterID s + 1)
+incrStep = modify (+ 1)
 
 -- | Get the next \"step\" number (the order of flow arrows in the diagram).
 nextStep :: DFD Int
 nextStep = do
   incrStep
-  liftM step get
-
-nextClusterID :: DFD Int
-nextClusterID = do
-  incrClusterID
-  liftM clusterID get
+  get
 
 inQuotes :: String -> String
 inQuotes s = "\"" ++ s ++ "\""
@@ -109,10 +99,9 @@ convertFlows :: [C.Flow] -> DFD StmtList
 convertFlows = liftM concat . mapM convertFlow
 
 convertRootNode :: C.RootNode -> DFD StmtList
-convertRootNode (C.TrustBoundary attrs nodes) = do
+convertRootNode (C.TrustBoundary id' attrs nodes) = do
   nodeStmts <- convertNodes nodes
-  id' <- nextClusterID
-  let sgId = "cluster_" ++ show id'
+  let sgId = "cluster_" ++ id'
       defaultSgAttrs = [
           Attr "fontsize" "10",
           Attr "fontcolor" "grey35",
@@ -165,5 +154,5 @@ convertDiagram (C.Diagram attrs rootNodes flows) = do
                 normalize $ Digraph "Untitled" $ defaultGraphStmts ++ n ++ f
 
 asDFD :: C.Diagram -> Graph
-asDFD d = evalState (convertDiagram d) DFDState { step = 0, clusterID = 0 }
+asDFD d = evalState (convertDiagram d) 0
 
