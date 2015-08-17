@@ -108,9 +108,9 @@ spec =
           "metadata" .= object []
         ]
       ]
-    it "adds boundary title as node metadata if available" $
+    it "adds boundary id as node metadata if available" $
       convertDiagram (Diagram M.empty [
-                                  TrustBoundary (M.singleton "title" "Foo") [
+                                  TrustBoundary "foo" M.empty [
                                     InputOutput "bar" M.empty
                                   ]
                                 ] []) `shouldEncodeAsJSON` object [
@@ -120,7 +120,7 @@ spec =
               "id" .= String "bar",
               "metadata" .= object [
                 "type" .= String "io",
-                "trust-boundary" .= String "Foo"
+                "trust-boundary" .= String "foo"
               ]
             ]
             ]),

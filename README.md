@@ -81,11 +81,11 @@ diagram {
 
 The `boundary` form declares a TrustBoundary node that can contain
 attributes and other nodes. Boundaries are only allowed in the top-level
-diagram.
+diagram and they must have unique IDs.
 
 ```dot
 diagram {
-  boundary {
+  boundary my_boundary {
     title = "My System"
   }
 }

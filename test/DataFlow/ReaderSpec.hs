@@ -34,22 +34,22 @@ spec =
     it "reads diagram with trust boundary" $
       let input = unlines [
                             "diagram {",
-                            "  boundary {}",
+                            "  boundary foo {}",
                             "}"
                           ]
       in input `shouldReadAsDiagram` Diagram M.empty [
-          TrustBoundary M.empty []
+          TrustBoundary "foo" M.empty []
         ] []
     it "reads diagram with trust boundary and nested nodes" $
       let input = unlines [
                             "diagram {",
-                            "  boundary {",
+                            "  boundary foo {",
                             "    io dynamo",
                             "  }",
                             "}"
                           ]
       in input `shouldReadAsDiagram` Diagram M.empty [
-          TrustBoundary M.empty [
+          TrustBoundary "foo" M.empty [
             InputOutput "dynamo" M.empty
           ]
         ] []
@@ -187,13 +187,13 @@ spec =
     it "can read first flow with id starting with b (conflicting with boundary)" $
       let input = unlines [
                             "diagram {",
-                            "  boundary {}",
+                            "  boundary foo {}",
                             "  bar -> baz {",
                             "  }",
                             "}"
                           ]
       in input `shouldReadAsDiagram` Diagram M.empty [
-          TrustBoundary M.empty []
+          TrustBoundary "foo" M.empty []
         ] [
           Flow "bar" "baz" M.empty
         ]

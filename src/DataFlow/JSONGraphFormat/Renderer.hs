@@ -28,8 +28,8 @@ convertNode b (Database id attrs) =
 convertRootNode :: RootNode -> [JG.Node]
 convertRootNode (Node node) = [convertNode Nothing node]
 -- TODO: replace title attribute with mandatory ID for boundaries
-convertRootNode (TrustBoundary attrs nodes) =
-  map (convertNode (M.lookup "title" attrs)) nodes
+convertRootNode (TrustBoundary id' attrs nodes) =
+  map (convertNode (Just id')) nodes
 
 convertFlow :: Flow -> JG.Edge
 convertFlow (Flow source target attrs) =

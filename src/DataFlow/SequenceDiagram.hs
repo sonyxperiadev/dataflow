@@ -42,8 +42,8 @@ convertFlow (C.Flow i1 i2 attrs) =
   in Edge i1 i2 s
 
 convertRootNode :: C.RootNode -> Stmt
-convertRootNode (C.TrustBoundary attrs nodes) =
-  Box (convertNewline $ M.findWithDefault "Untitled" "title" attrs) $ map convertNode nodes
+convertRootNode (C.TrustBoundary id' attrs nodes) =
+  Box (convertNewline $ M.findWithDefault id' "title" attrs) $ map convertNode nodes
 convertRootNode (C.Node n) = convertNode n
 
 defaultSkinParams :: [Stmt]
