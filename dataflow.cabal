@@ -48,7 +48,7 @@ library
     DataFlow.JSONGraphFormat,
     DataFlow.JSONGraphFormat.Renderer
   build-depends:
-    base >=4,
+    base >=4 && < 5,
     mtl >=2.2,
     containers >= 0.4,
     MissingH,
@@ -67,7 +67,7 @@ library
 executable dataflow
   main-is: Main.hs
   build-depends:
-    base >=4,
+    base >=4 && < 5,
     text >= 1.0,
     bytestring >= 0.10,
     dataflow
@@ -80,7 +80,7 @@ test-suite spec
   default-language: Haskell98
   hs-source-dirs: test
   build-depends:
-    base,
+    base >=4 && < 5,
     containers >= 0.4,
     parsec >= 3.1.9,
     HUnit,
