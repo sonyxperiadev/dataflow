@@ -281,12 +281,12 @@ dataflow template template.ha webapp.flow > webapp.html
   ```
 
 * `flows` - a list of all the Flow nodes in the diagram. Attributes of the
-  flow is accessible inside the iteration scope.
+  flow is accessible inside the iteration scope, including a `number`.
 
   ```mustache
   <ol>
   {{#flows}}
-    <li>{{description}}</li>
+    <li>{{number}} - {{description}}</li>
   {{/flows}}
   </ol>
   ```
