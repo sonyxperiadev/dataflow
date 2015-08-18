@@ -6,7 +6,7 @@ module DataFlow.Reader (
 
 import Control.Monad
 import Data.Functor ((<$>))
-import Control.Applicative ((<*>))
+import Control.Applicative ((<*>), (<*), (*>))
 import Data.Char
 import Data.List
 import qualified Data.Map as M
