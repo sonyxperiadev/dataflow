@@ -1,5 +1,6 @@
 {-# LANGUAGE OverloadedStrings #-}
 module DataFlow.JSONGraphFormat (
+  Val(..),
   Metadata(),
   Document(..),
   Graph(..),
@@ -12,7 +13,14 @@ import           Data.Aeson.Types (Pair)
 import qualified Data.Map         as M
 import           Data.Vector      (fromList)
 
-type Metadata = M.Map String String
+data Val = Str String
+         | Arr [Val]
+
+instance ToJSON Val where
+  toJSON (Str s) = toJSON s
+  toJSON (Arr vs) = toJSON vs
+
+type Metadata = M.Map String Val
 
 data Document = SingleGraph { graph :: Graph }
               | MultiGraph { graphs :: [Graph] }
@@ -22,7 +30,7 @@ instance ToJSON Document where
       "graph" .= toJSON g
     ]
   toJSON (MultiGraph gs) = object [
-      "graphs" .= (Array $ fromList $ map toJSON gs)
+      "graphs" .= toJSON gs
     ]
 
 data Graph = Graph { nodes    :: [Node]
@@ -34,8 +42,8 @@ data Graph = Graph { nodes    :: [Node]
 instance ToJSON Graph where
   toJSON (Graph nodes edges lbl metadata) = object $
     labelField lbl ++ [
-      "nodes" .= Array (fromList $ map toJSON nodes),
-      "edges" .= Array (fromList $ map toJSON edges),
+      "nodes" .= toJSON nodes,
+      "edges" .= toJSON edges,
       "metadata" .= toJSON metadata
     ]
 

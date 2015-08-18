@@ -22,6 +22,13 @@ italic s =
   join "\\n" $ map italic' $ split "\\n" s
   where italic' = printf "<i>%s</i>"
 
+showValue :: C.Value -> String
+showValue (C.String s) = convertNewline s
+showValue (C.Array vs) = join "\\n" $ map (("* " ++) . showValue) vs
+
+blank :: C.Value
+blank = C.String ""
+
 convertNode :: C.Node -> Stmt
 convertNode (C.InputOutput id' attrs) =
   Entity id' $ convertNewline $ getTitleOrBlank attrs
@@ -32,8 +39,8 @@ convertNode (C.Database id' attrs) =
 
 convertFlow :: C.Flow -> Stmt
 convertFlow (C.Flow i1 i2 attrs) =
-  let p = (convertNewline (bold $ M.findWithDefault "" "operation" attrs),
-           italic $ convertNewline (M.findWithDefault "" "data" attrs))
+  let p = (bold $ showValue $ M.findWithDefault blank "operation" attrs,
+           italic $ showValue $ M.findWithDefault blank "data" attrs)
       s = case p of
             ("", "") -> ""
             ("", d) -> d
@@ -43,7 +50,8 @@ convertFlow (C.Flow i1 i2 attrs) =
 
 convertRootNode :: C.RootNode -> Stmt
 convertRootNode (C.TrustBoundary id' attrs nodes) =
-  Box (convertNewline $ M.findWithDefault id' "title" attrs) $ map convertNode nodes
+  let title = showValue $ M.findWithDefault (C.String id') "title" attrs
+  in Box title (map convertNode nodes)
 convertRootNode (C.Node n) = convertNode n
 
 defaultSkinParams :: [Stmt]
@@ -89,6 +97,6 @@ defaultSkinParams = [
 
 asSequenceDiagram :: C.Diagram -> Diagram
 asSequenceDiagram (C.Diagram _ rootNodes flows) =
-  SequenceDiagram $ defaultSkinParams 
-                    ++ map convertRootNode rootNodes 
+  SequenceDiagram $ defaultSkinParams
+                    ++ map convertRootNode rootNodes
                     ++ map convertFlow flows

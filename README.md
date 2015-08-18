@@ -42,12 +42,21 @@ non-space characters on each line are trimmed, regardless of the indentation.
   textblock`
 ```
 
-... would render as:
+... is converted to:
 
 ```
 this is
 a
 textblock
+```
+
+#### Arrays
+
+Arrays can contain other values (arrays, strings, text blocks).
+
+```dot
+["hello", "world", ["I", "am", `nested
+                                here`]]
 ```
 
 #### Attributes
@@ -63,6 +72,7 @@ Keys have the same rules as IDs. Values can be strings or text blocks.
   key1 = "attr value"
   key2 = `attr
           value`
+  key3 = ["value1", "value2"]
 }
 ```
 

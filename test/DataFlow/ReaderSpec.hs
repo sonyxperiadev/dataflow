@@ -15,7 +15,7 @@ spec =
       "diagram {}" `shouldReadAsDiagram` Diagram M.empty [] []
 
     it "reads diagram with single attribute" $
-      "diagram { name = \"\" }" `shouldReadAsDiagram` Diagram (M.singleton "name" "") [] []
+      "diagram { name = \"\" }" `shouldReadAsDiagram` Diagram (M.singleton "name" (String "")) [] []
 
     it "reads diagram with multiple attributes" $
       let input = unlines [
@@ -24,8 +24,8 @@ spec =
                             "  importance = \"high\"",
                             "}"
                           ]
-      in input `shouldReadAsDiagram` Diagram (M.fromList [("name", "foo"),
-                                                   ("importance", "high")]) [] []
+      in input `shouldReadAsDiagram` Diagram (M.fromList [("name", String "foo"),
+                                                          ("importance", String "high")]) [] []
 
 
     it "reads diagram with whitespace inside braces" $
@@ -109,7 +109,8 @@ spec =
                             "}"
                           ]
       in input `shouldReadAsDiagram` Diagram M.empty [
-          Node $ InputOutput "baz" (M.fromList [("title", "foo"), ("description", "bar")])
+          Node $ InputOutput "baz" (M.fromList [("title", String "foo"),
+                                                ("description", String "bar")])
         ] []
     it "reads multiple attributes on a single line" $
       let input = unlines [
@@ -120,7 +121,8 @@ spec =
                             "}"
                           ]
       in input `shouldReadAsDiagram` Diagram M.empty [
-          Node $ InputOutput "baz" (M.fromList [("title", "foo"), ("description", "bar")])
+          Node $ InputOutput "baz" (M.fromList [("title", String "foo"),
+                                                ("description", String "bar")])
         ] []
     it "reads attributes and nodes" $
       let input = unlines [
@@ -131,8 +133,8 @@ spec =
                             "  }",
                             "}"
                           ]
-      in input `shouldReadAsDiagram` Diagram (M.singleton "name" "bar") [
-          Node $ InputOutput "baz" (M.singleton "title" "foo")
+      in input `shouldReadAsDiagram` Diagram (M.singleton "name" (String "bar")) [
+          Node $ InputOutput "baz" (M.singleton "title" (String "foo"))
         ] []
     it "reads flow with attributes" $
       let input = unlines [
@@ -143,7 +145,7 @@ spec =
                             "}"
                           ]
       in input `shouldReadAsDiagram` Diagram M.empty [] [
-          Flow "foo" "bar" (M.singleton "title" "baz")
+          Flow "foo" "bar" (M.singleton "title" (String "baz"))
         ]
     it "reads text blocks" $
       let input = unlines [
@@ -156,7 +158,7 @@ spec =
                             "}"
                           ]
       in input `shouldReadAsDiagram` Diagram M.empty [] [
-          Flow "foo" "bar" (M.singleton "description" "Hello,\n\"evil\"\nworld!")
+          Flow "foo" "bar" (M.singleton "description" (String "Hello,\n\"evil\"\nworld!"))
         ]
     it "only allows boundaries in top-level diagram" $
       let input = unlines [
@@ -214,3 +216,65 @@ spec =
                             "/* Footer */"
                           ]
       in input `shouldReadAsDiagram` Diagram M.empty [] []
+    it "reads empty array" $
+      let input = unlines [
+                            "diagram {",
+                            "  things = []",
+                            "}"
+                          ]
+      in input `shouldReadAsDiagram` Diagram (M.fromList [
+        ("things", Array [])
+      ]) [] []
+    it "reads array with one string" $
+      let input = unlines [
+                            "diagram {",
+                            "  things = [\"hello\"]",
+                            "}"
+                          ]
+      in input `shouldReadAsDiagram` Diagram (M.fromList [
+        ("things", Array [String "hello"])
+      ]) [] []
+    it "reads array of strings" $
+      let input = unlines [
+                            "diagram {",
+                            "  things = [\"foo\", \"bar\"]",
+                            "}"
+                          ]
+      in input `shouldReadAsDiagram` Diagram (M.fromList [
+        ("things", Array [String "foo", String "bar"])
+      ]) [] []
+    it "reads array of arrays of strings" $
+      let input = unlines [
+                            "diagram {",
+                            "  things = [",
+                            "    [\"foo\", \"bar\"]",
+                            "  ]",
+                            "}"
+                          ]
+      in input `shouldReadAsDiagram` Diagram (M.fromList [
+        ("things", Array [Array [String "foo", String "bar"]])
+      ]) [] []
+    it "reads array with one text block" $
+      let input = unlines [
+                            "diagram {",
+                            "  things = [",
+                            "    `Hello`",
+                            "  ]",
+                            "}"
+                          ]
+      in input `shouldReadAsDiagram` Diagram (M.fromList [
+        ("things", Array [String "Hello"])
+      ]) [] []
+    it "reads array with text blocks" $
+      let input = unlines [
+                            "diagram {",
+                            "  things = [",
+                            "    `Hello`,",
+                            "    `,",
+                            "     world`",
+                            "  ]",
+                            "}"
+                          ]
+      in input `shouldReadAsDiagram` Diagram (M.fromList [
+        ("things", Array [String "Hello", String ",\nworld"])
+      ]) [] []
