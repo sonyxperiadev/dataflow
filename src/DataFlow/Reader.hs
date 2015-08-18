@@ -31,40 +31,56 @@ identifier = do
   rest <-  many (letter <|> digit <|> char '_')
   return $ first : rest
 
-str :: Parser String
+str :: Parser Value
 str = do
   -- TODO: Handle escaped characters.
   _ <- char '"'
   s <- many (noneOf "\"\r\n")
   _ <- char '"'
-  return s
+  return $ String s
 
-textBlock :: Parser String
+textBlock :: Parser Value
 textBlock = do
   _ <- char '`'
   s <- anyToken `manyTill` try (char '`')
-  return $ intercalate "\n" $ map (dropWhile isSpace) $ lines s
+  return $ String $ intercalate "\n" $ map (dropWhile isSpace) $ lines s
 
-inBraces :: Parser t -> Parser t
-inBraces inside = do
+inside :: Parser x -> Parser y -> Parser t -> Parser t
+inside before after p = do
   commentsAndSpace
-  _ <- char '{'
+  _ <- before
   commentsAndSpace
-  c <- inside
+  c <- p
   commentsAndSpace
-  _ <- char '}'
+  _ <- after
   commentsAndSpace
   return c
 
-attr :: Parser (String, String)
+inBraces :: Parser t -> Parser t
+inBraces = inside (char '{') (char '}')
+
+inSquareBrackets :: Parser t -> Parser t
+inSquareBrackets = inside (char '[') (char ']')
+
+array :: Parser Value
+array =
+  let sep = do _ <- char ','
+               commentsAndSpace
+  in Array <$>
+    inSquareBrackets (value `sepBy` sep) <* commentsAndSpace
+
+value :: Parser Value
+value = try textBlock <|> try str <|> array
+
+attr :: Parser (String, Value)
 attr = do
   key <- identifier
   skipMany1 $ char ' '
   _ <- char '='
   skipMany1 $ char ' '
-  value <- try textBlock <|> str
+  v <- value
   commentsAndSpace
-  return (key, value)
+  return (key, v)
 
 attrs :: Parser Attributes
 attrs = liftM M.fromList $ many (try attr)

@@ -1,5 +1,6 @@
 module DataFlow.Core (
   ID,
+  Value(..),
   Attributes,
   Diagram(..),
   RootNode(..),
@@ -12,7 +13,17 @@ import Data.Map as M
 -- | An identifier corresponding to those in Graphviz.
 type ID = String
 
-type Attributes = M.Map String String
+data Value = String String
+           | Array [Value]
+           deriving (Eq)
+
+instance Show Value where
+  show (String s) = s
+  show (Array vs) = show vs
+
+-- | Attribute key-value pairs can be declared in diagrams, nodes, boundaries
+-- | and flows.
+type Attributes = M.Map String Value
 
 -- | The top level diagram.
 data Diagram = Diagram Attributes [RootNode] [Flow]

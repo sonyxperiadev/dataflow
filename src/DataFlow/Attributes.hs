@@ -5,7 +5,7 @@ import qualified Data.Map as M
 import DataFlow.Core
 
 getTitleOrBlank :: Attributes -> String
-getTitleOrBlank = M.findWithDefault "" "title"
+getTitleOrBlank = show . M.findWithDefault (String "") "title"
 
 getTitle :: Attributes -> Maybe String
-getTitle = M.lookup "title"
+getTitle a = show <$> M.lookup "title" a

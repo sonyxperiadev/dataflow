@@ -21,15 +21,18 @@ diagram {
   }
 
   f -> d {
-    action = "Operation"
-    data = "Data"
+    operation = "Operation 1"
+    data = ["Data"]
   }
   i -> f {
-    data = "Data"
+    operation = "Operation 2"
+    data = ["Data"]
   }
   f -> i {
-    action = "Operation"
-    data = `Some data,
-            and other data.`
+    operation = "Operation 3"
+    data = [
+      "Some data",
+      "Other data"
+    ]
   }
 }

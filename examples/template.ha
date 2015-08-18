@@ -3,12 +3,21 @@
 <head>
   <meta charset="UTF-8">
   <title>{{title}}</title>
+
+  <style>
+  li h2 {
+    font-size: 125%;
+  }
+  ul ul {
+    list-style-type: upper-roman;
+  }
+  </style>
 </head>
 <body>
 <h1>{{title}}</h1>
 
 {{#description}}
-<p>{{{description}}}</p>
+{{#markdown}}description{{/markdown}}
 {{/description}}
 
 <img src="./{{filename_without_extension}}.dfd.png">
@@ -18,12 +27,14 @@
 {{#flows}}
   <li>
     {{#operation}}
-    <p><strong>{{{operation}}}</strong></p>
+    <h2>{{{operation}}}</h2>
     {{/operation}}
 
+    <ul>
     {{#data}}
-    <p><strong>Data:</strong> {{{data}}}</p>
+      <li>{{value}}</li>
     {{/data}}
+    </ul>
 
     {{#description}}
     <p>{{#html_linebreaks}}description{{/html_linebreaks}}</p>
@@ -34,9 +45,11 @@
 
 <h2>Threats</h2>
 
+<ul>
 {{#threats}}
-<p>{{#markdown}}threats{{/markdown}}</p>
+<li><code>{{value}}</code></li>
 {{/threats}}
+</ul>
 
 </body>
 </html>

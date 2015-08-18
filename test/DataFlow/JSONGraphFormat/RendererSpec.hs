@@ -2,7 +2,10 @@
 module DataFlow.JSONGraphFormat.RendererSpec where
 
 import Control.Monad (when)
-import Data.Aeson
+
+import Data.Aeson ((.=), object, toJSON, ToJSON, encode)
+import qualified Data.Aeson as A
+
 import Data.Vector (fromList)
 import qualified Data.Map as M
 import Test.Hspec (Spec, describe, it, expectationFailure, Expectation)
@@ -10,9 +13,9 @@ import Data.ByteString.Lazy.Char8 (unpack)
 import Text.Printf (printf)
 
 import DataFlow.Core
-import DataFlow.JSONGraphFormat.Renderer
+import DataFlow.JSONGraphFormat.Renderer (convertDiagram)
 
-shouldEncodeAsJSON :: (ToJSON a) => a -> Value -> Expectation
+shouldEncodeAsJSON :: (ToJSON a) => a -> A.Value -> Expectation
 v `shouldEncodeAsJSON` e = do
   let j = toJSON v
   when (j /= e) $
@@ -27,81 +30,81 @@ spec =
       convertDiagram (Diagram M.empty [] []) `shouldEncodeAsJSON` object [
           "graph" .= object [
             "metadata" .= object [],
-            "nodes" .= Array (fromList []),
-            "edges" .= Array (fromList [])
+            "nodes" .= A.Array (fromList []),
+            "edges" .= A.Array (fromList [])
           ]
         ]
     it "uses diagram title attribute as graph label" $
-      convertDiagram (Diagram (M.singleton "title" "Foo") [] []) `shouldEncodeAsJSON` object [
+      convertDiagram (Diagram (M.singleton "title" (String "Foo")) [] []) `shouldEncodeAsJSON` object [
           "graph" .= object [
-            "label" .= String "Foo",
+            "label" .= A.String "Foo",
             "metadata" .= object [],
-            "nodes" .= Array (fromList []),
-            "edges" .= Array (fromList [])
+            "nodes" .= A.Array (fromList []),
+            "edges" .= A.Array (fromList [])
           ]
         ]
     it "converts nodes" $
       convertDiagram (Diagram M.empty [
                                   Node $ InputOutput "foo" $ M.fromList [
-                                      ("title", "Foo"),
-                                      ("a", "b")
+                                      ("title", String "Foo"),
+                                      ("a", String "b")
                                     ],
                                   Node $ Function "bar" $ M.fromList [
-                                      ("title", "Bar"),
-                                      ("c", "d")
+                                      ("title", String "Bar"),
+                                      ("c", String "d")
                                     ]
                                 ] []) `shouldEncodeAsJSON` object [
         "graph" .= object [
-          "nodes" .= Array (fromList [
+          "nodes" .= A.Array (fromList [
             object [
-              "id" .= String "foo",
-              "label" .= String "Foo",
+              "id" .= A.String "foo",
+              "label" .= A.String "Foo",
               "metadata" .= object [
-                "type" .= String "io",
-                "a" .= String "b"
+                "type" .= A.String "io",
+                "a" .= A.String "b"
               ]
             ],
             object [
-              "id" .= String "bar",
-              "label" .= String "Bar",
+              "id" .= A.String "bar",
+              "label" .= A.String "Bar",
               "metadata" .= object [
-                "type" .= String "function",
-                "c" .= String "d"
+                "type" .= A.String "function",
+                "c" .= A.String "d"
                 ]
               ]
             ]),
-          "edges" .= Array (fromList []),
+          "edges" .= A.Array (fromList []),
           "metadata" .= object []
         ]
       ]
     it "converts edges" $
       convertDiagram (Diagram M.empty [] [
         Flow "a" "b" $ M.fromList [
-          ("title", "Foo"),
-          ("a", "b")
+          ("title", String "Foo"),
+          ("a", String "b")
         ],
         Flow "b" "c" $ M.fromList [
-          ("title", "Bar"),
-          ("b", "c")
+          ("title", String "Bar"),
+          ("b", String "c")
         ]
       ]) `shouldEncodeAsJSON` object [
         "graph" .= object [
-          "nodes" .= Array (fromList []),
-          "edges" .= Array (fromList [
+          "nodes" .= A.Array (fromList []),
+          "edges" .= A.Array (fromList [
             object [
-              "source" .= String "a",
-              "target" .= String "b",
-              "label" .= String "Foo",
+              "source" .= A.String "a",
+              "target" .= A.String "b",
+              "label" .= A.String "Foo",
               "metadata" .= object [
-                "a" .= String "b"
+                "a" .= A.String "b"
               ]
             ],
             object [
-              "source" .= String "b",
-              "target" .= String "c",
-              "label" .= String "Bar",
+              "source" .= A.String "b",
+              "target" .= A.String "c",
+              "label" .= A.String "Bar",
               "metadata" .= object [
-                "b" .= String "c"
+                "b" .= A.String "c"
               ]
             ]
           ]),
@@ -115,16 +118,16 @@ spec =
                                   ]
                                 ] []) `shouldEncodeAsJSON` object [
         "graph" .= object [
-          "nodes" .= Array (fromList [
+          "nodes" .= A.Array (fromList [
             object [
-              "id" .= String "bar",
+              "id" .= A.String "bar",
               "metadata" .= object [
-                "type" .= String "io",
-                "trust-boundary" .= String "foo"
+                "type" .= A.String "io",
+                "trust-boundary" .= A.String "foo"
               ]
             ]
             ]),
-          "edges" .= Array (fromList []),
+          "edges" .= A.Array (fromList []),
           "metadata" .= object []
         ]
       ]

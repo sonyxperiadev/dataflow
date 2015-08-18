@@ -2,10 +2,15 @@ diagram {
   title = "Webapp"
 
   /* Some comment about this... */
-  threats = `
-    No particular threats at this point.
+  description = `
+    No *particular* threats to consider at this point.
 
     It's **extremely** safe.`
+
+  threats = [
+    "csrf",
+    "mitm"
+  ]
 
   boundary browser {
     title = "Browser"
@@ -35,18 +40,21 @@ diagram {
   }
   server -> logs {
     operation = "Log"
-    data = `The user
-            IP address.`
+    data = [
+      "IP Address",
+      "Timestamp",
+      "Geolocation"
+    ]
     description = `Logged to a ELK stack.`
   }
   server -> client {
     operation = "Response"
-    data = "User Profile"
+    data = ["User Profile"]
     description = `The server responds with some HTML.`
   }
   analytics <- client {
     operation = "Log"
-    data = "Page Navigation"
+    data = ["Page Navigation"]
     description = `The Google Analytics plugin sends navigation
                    data to Google.`
   }

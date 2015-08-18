@@ -3,48 +3,70 @@
 <head>
   <meta charset="UTF-8">
   <title>Webapp</title>
+
+  <style>
+  li h2 {
+    font-size: 125%;
+  }
+  ul ul {
+    list-style-type: upper-roman;
+  }
+  </style>
 </head>
 <body>
 <h1>Webapp</h1>
 
+<p>No <i>particular</i> threats to consider at this point.</p><p>It's <b>extremely</b> safe.</p>
 
 <img src="./webapp.dfd.png">
 <a href="./webapp.seq.png">Sequence Diagram</a>
 
 <ol>
   <li>
-        <p><strong>Request /</strong></p>
+        <h2>Request /</h2>
     
-    
+    <ul>
+        </ul>
+
         <p>User navigates with a browser to see some content.</p>
       </li>
   <li>
-        <p><strong>Log</strong></p>
+        <h2>Log</h2>
     
-        <p><strong>Data:</strong> The user
-IP address.</p>
-    
+    <ul>
+          <li>IP Address</li>
+          <li>Timestamp</li>
+          <li>Geolocation</li>
+        </ul>
+
         <p>Logged to a ELK stack.</p>
       </li>
   <li>
-        <p><strong>Response</strong></p>
+        <h2>Response</h2>
     
-        <p><strong>Data:</strong> User Profile</p>
-    
+    <ul>
+          <li>User Profile</li>
+        </ul>
+
         <p>The server responds with some HTML.</p>
       </li>
   <li>
-        <p><strong>Log</strong></p>
+        <h2>Log</h2>
     
-        <p><strong>Data:</strong> Page Navigation</p>
-    
+    <ul>
+          <li>Page Navigation</li>
+        </ul>
+
         <p>The Google Analytics plugin sends navigation<br/>data to Google.</p>
       </li>
 </ol>
 
 <h2>Threats</h2>
 
-<p><p>No particular threats at this point.</p><p>It's <b>extremely</b> safe.</p></p>
+<ul>
+<li><code>csrf</code></li>
+<li><code>mitm</code></li>
+</ul>
 
 </body>
 </html>

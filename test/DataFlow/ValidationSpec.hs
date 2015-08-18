@@ -17,7 +17,7 @@ shouldReject :: Diagram -> Expectation
 shouldReject d = either onFailure onSuccess (validate d)
   where onSuccess _ = expectationFailure $
                         "Expected diagram to be rejected by validate: " ++ show d
-        onFailure = print
+        onFailure _ = return ()
 
 spec :: Spec
 spec =
