@@ -1,6 +1,7 @@
 module DataFlow.Attributes where
 
 import qualified Data.Map as M
+import Data.Functor ((<$>))
 
 import DataFlow.Core
 
