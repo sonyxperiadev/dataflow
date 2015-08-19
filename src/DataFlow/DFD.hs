@@ -48,10 +48,6 @@ color :: String -> String -> String
 color _ "" = ""
 color c s = printf "<font color=\"%s\">%s</font>" c s
 
-showValue :: C.Value -> String
-showValue (C.String s) = s
-showValue (C.Array vs) = unlines $ map (("* " ++) . showValue) vs
-
 convertNode :: C.Node -> DFD StmtList
 
 convertNode (C.InputOutput id' attrs) = return [
@@ -86,18 +82,26 @@ convertFlow :: C.Flow -> DFD StmtList
 convertFlow (C.Flow i1 i2 attrs) = do
     s <- nextStep
     let stepStr = color "#3184e4" $ bold $ printf "(%d) " s
-    let text = case (M.lookup "operation" attrs, M.lookup "data" attrs) of
-                (Just op, Just d) -> bold (showValue op) ++
-                                     "<br/>" ++
-                                     small (showValue d)
-                (Just op, Nothing) -> bold $ showValue op
-                (Nothing, Just d) -> small $ showValue d
-                _ -> ""
+
+        asRows :: C.Value -> [String]
+        asRows (C.String s) = [s]
+        asRows (C.Array vs) = concatMap asRows vs
+
+        rowsToTable :: [String] -> String
+        rowsToTable rows =
+          printf "<table border=\"0\" cellborder=\"0\" cellpadding=\"2\">%s</table>" r
+          where r = concatMap (printf "<tr><td>%s</td></tr>") rows :: String
+
+        rows = case (M.lookup "operation" attrs, M.lookup "data" attrs) of
+                (Just op, Just d) -> (stepStr ++ bold (show op)) : map small (asRows d)
+                (Just op, Nothing) -> [stepStr ++ bold (show op)]
+                (Nothing, Just d) -> stepStr : map small (asRows d)
+                _ -> []
     return [
         EdgeStmt (EdgeExpr (IDOperand (NodeID i1 Nothing))
                           Arrow
                           (IDOperand (NodeID i2 Nothing))) [
-          label $ stepStr ++ text
+          label $ rowsToTable rows
         ]
       ]
 
@@ -153,9 +157,9 @@ convertDiagram (C.Diagram attrs rootNodes flows) = do
   f <- convertFlows flows
   return $ case M.lookup "title" attrs of
               Just title ->
-                let lbl = EqualsStmt "label" (inAngleBrackets $ showValue title)
+                let lbl = EqualsStmt "label" (inAngleBrackets $ show title)
                     stmts = lbl : defaultGraphStmts ++ n ++ f
-                in normalize $ Digraph (inQuotes $ showValue title) stmts
+                in normalize $ Digraph (inQuotes $ show title) stmts
               Nothing ->
                 normalize $ Digraph "Untitled" $ defaultGraphStmts ++ n ++ f
 

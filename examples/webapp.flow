@@ -41,8 +41,8 @@ diagram {
   server -> logs {
     operation = "Log"
     data = [
-      "IP Address",
-      "Timestamp",
+      "IP Address<sub>user</sub>",
+      "Timestamp<sub>request</sub>",
       "Geolocation"
     ]
     description = `Logged to a ELK stack.`

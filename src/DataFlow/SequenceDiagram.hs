@@ -24,7 +24,7 @@ italic s =
 
 showValue :: C.Value -> String
 showValue (C.String s) = convertNewline s
-showValue (C.Array vs) = join "\\n" $ map (("* " ++) . showValue) vs
+showValue (C.Array vs) = join "\\n" $ map showValue vs
 
 blank :: C.Value
 blank = C.String ""
