@@ -1,5 +1,5 @@
 name:                dataflow
-version:             0.7.2.0
+version:             0.7.3.0
 synopsis:            Generate Graphviz documents from a Haskell representation.
 description:         Render graphs using a declarative markup. Currently
                      supports DFD (http://en.wikipedia.org/wiki/Data_flow_diagram)
