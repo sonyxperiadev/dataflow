@@ -17,19 +17,19 @@ import qualified DataFlow.Hastache.Renderer as HR
 import qualified DataFlow.JSONGraphFormat.Renderer as JG
 
 usage :: IO ()
-usage = hPutStrLn stderr $ unlines [
-    "Usage: dataflow command args*",
-    "",
-    "Commands",
-    "--------",
-    "dfd SRC               - outputs a DFD in the Graphviz DOT format",
-    "seq SRC               - outputs a sequence diagram in PlantUML format",
-    "template TEMPLATE SRC - renders the TEMPLATE using data from SRC",
-    "json SRC              - outputs a sequence diagram in JSON Graph Format (http://jsongraphformat.info/)",
-    "validate SRC          - validates the input",
-    "",
-    "All commands print to stdout."
-  ]
+usage = hPutStrLn stderr
+    "Usage: dataflow command args*\
+    \ \
+    \Commands\
+    \--------\
+    \dfd SRC               - outputs a DFD in the Graphviz DOT format\
+    \seq SRC               - outputs a sequence diagram in PlantUML format\
+    \template TEMPLATE SRC - renders the TEMPLATE using data from SRC\
+    \json SRC              - outputs a sequence diagram in JSON Graph Format\
+    \                        (http://jsongraphformat.info/)\
+    \validate SRC          - validates the input\
+    \ \
+    \All commands print to stdout"
 
 showErrors :: Show s => Either [s] v -> Either String v
 showErrors = either (Left . unlines . map show) Right
