@@ -1,10 +1,12 @@
+{-# LANGUAGE TemplateHaskell #-}
 module Main where
 
+import Development.GitRev
+import qualified Data.ByteString.Lazy.Char8 as BC
+import qualified Data.Text.Lazy.IO as TL
 import System.IO
 import System.Environment
 import System.Exit
-import qualified Data.ByteString.Lazy.Char8 as BC
-import qualified Data.Text.Lazy.IO as TL
 
 import DataFlow.Reader
 import DataFlow.Core
@@ -17,19 +19,23 @@ import qualified DataFlow.Hastache.Renderer as HR
 import qualified DataFlow.JSONGraphFormat.Renderer as JG
 
 usage :: IO ()
-usage = hPutStrLn stderr
-    "Usage: dataflow command args*\
-    \ \
-    \Commands\
-    \--------\
-    \dfd SRC               - outputs a DFD in the Graphviz DOT format\
-    \seq SRC               - outputs a sequence diagram in PlantUML format\
-    \template TEMPLATE SRC - renders the TEMPLATE using data from SRC\
-    \json SRC              - outputs a sequence diagram in JSON Graph Format\
-    \                        (http://jsongraphformat.info/)\
-    \validate SRC          - validates the input\
-    \ \
-    \All commands print to stdout"
+usage = hPutStrLn stderr $ unlines [
+    "Usage: dataflow command args*",
+    "",
+    "Commands",
+    "--------",
+    "dfd SRC               - outputs a DFD in the Graphviz DOT format",
+    "seq SRC               - outputs a sequence diagram in PlantUML format",
+    "template TEMPLATE SRC - renders the TEMPLATE using data from SRC",
+    "json SRC              - outputs a sequence diagram in JSON Graph Format",
+    "                        (http://jsongraphformat.info/)",
+    "validate SRC          - validates the input",
+    "",
+    "--version             - display VCS information",
+    "--help                - display this help message",
+    "",
+    "All commands print to stdout"
+  ]
 
 showErrors :: Show s => Either [s] v -> Either String v
 showErrors = either (Left . unlines . map show) Right
@@ -77,6 +83,11 @@ validate path = do
     (Left err) -> putStrLn err
     (Right _) -> return ()
 
+version :: IO ()
+version = do
+  putStrLn $ "Branch: " ++ $(gitBranch)
+  putStrLn $ "Hash:   " ++ $(gitHash)
+
 main :: IO ()
 main = do
   args <- getArgs
@@ -86,6 +97,7 @@ main = do
     ["template", tmplPath, path] -> template tmplPath path
     ["json", path] -> json path
     ["validate", path] -> validate path
+    ["--version"] -> version
     ["--help"] -> usage
     _ -> do hPutStrLn stderr "Invalid command!\n\nRun with --help to see usage."
             exitWith $ ExitFailure 1
