@@ -84,7 +84,7 @@ convertFlow (C.Flow i1 i2 attrs) = do
     let stepStr = color "#3184e4" $ bold $ printf "(%d) " s
 
         asRows :: C.Value -> [String]
-        asRows (C.String s) = [s]
+        asRows (C.String s) = lines s
         asRows (C.Array vs) = concatMap asRows vs
 
         rowsToTable :: [String] -> String
