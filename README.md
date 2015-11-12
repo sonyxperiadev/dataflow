@@ -6,6 +6,21 @@ Render graphs using a declarative markup. Currently supports DFD
 
 ![DFD Output](examples/webapp.dfd.png)
 
+## Installation
+
+* To install using cabal run:
+
+  ```bash
+  $ cabal install dataflow
+  ```
+* There are some binaries available in
+[Releases](https://github.com/sonyxperiadev/dataflow/releases).
+
+* If you want to use Docker there are images available [on Docker Hub](
+  https://hub.docker.com/r/owickstrom/dataflow/).
+
+* For build instructions see [BUILD.md](BUILD.md).
+
 ## Usage
 
 The following forms are supported by DataFlow.
@@ -317,10 +332,6 @@ dfd: $(TARGETS)
 clean:
   rm -f $(TARGETS)
 ```
-
-## Build Instructions
-
-See [BUILD.md](BUILD.md).
 
 ## License
 
