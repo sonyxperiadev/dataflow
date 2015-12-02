@@ -180,7 +180,7 @@ diagram {
 
     It's **extremely** safe.`
 
-  boundary {
+  boundary browser {
     title = "Browser"
 
     function client {
@@ -188,7 +188,7 @@ diagram {
     }
   }
 
-  boundary {
+  boundary aws {
     title = "Amazon AWS"
 
     function server {
