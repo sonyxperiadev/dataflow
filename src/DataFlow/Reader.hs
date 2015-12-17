@@ -1,5 +1,5 @@
+-- | Reads .flow syntax.
 module DataFlow.Reader (
-    document,
     readDiagram,
     readDiagramFile
 ) where
@@ -156,8 +156,10 @@ diagram =
 document :: Parser Diagram
 document = commentsAndSpace *> diagram <* commentsAndSpace
 
+-- Read the string, as named by the second argument, as a 'Diagram'.
 readDiagram :: String -> String -> Either ParseError Diagram
 readDiagram = parse document
 
+-- Read the file at the given file path as a 'Diagram'.
 readDiagramFile :: FilePath -> IO (Either ParseError Diagram)
 readDiagramFile = parseFromFile document

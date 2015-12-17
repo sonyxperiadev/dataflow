@@ -1,4 +1,7 @@
-module DataFlow.DFD where
+-- | Convert a DataFlow 'C.Diagram' to a Graphviz 'Graph'.
+module DataFlow.DFD (
+  asDFD
+) where
 
 import Text.Printf
 import Control.Monad
@@ -16,7 +19,8 @@ type DFD v = State DFDState v
 incrStep :: DFD ()
 incrStep = modify (+ 1)
 
--- | Get the next \"step\" number (the order of flow arrows in the diagram).
+-- | Get the next \"step\" number (the sequence number of flow arrows in the
+-- | diagram).
 nextStep :: DFD Int
 nextStep = do
   incrStep
@@ -44,6 +48,7 @@ small :: String -> String
 small "" = ""
 small s = printf "<font point-size=\"10\">%s</font>" s
 
+-- | Display the text with the given color (Graphviz color format, e.g. @grey35@).
 color :: String -> String -> String
 color _ "" = ""
 color c s = printf "<font color=\"%s\">%s</font>" c s
@@ -150,7 +155,6 @@ defaultGraphStmts = [
     EqualsStmt "rankdir" "t"
   ]
 
-
 convertDiagram :: C.Diagram -> DFD Graph
 convertDiagram (C.Diagram attrs rootNodes flows) = do
   n <- convertRootNodes rootNodes
@@ -163,6 +167,8 @@ convertDiagram (C.Diagram attrs rootNodes flows) = do
               Nothing ->
                 normalize $ Digraph "Untitled" $ defaultGraphStmts ++ n ++ f
 
+-- | Converts a 'C.Diagram' to a 'Graph', with predefined styling, that can be
+--   rendered as a Graphviz document.
 asDFD :: C.Diagram -> Graph
 asDFD d = evalState (convertDiagram d) 0
 

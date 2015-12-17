@@ -1,4 +1,5 @@
 {-# LANGUAGE OverloadedStrings #-}
+-- | Renders diagrams using Hastache templates.
 module DataFlow.Hastache.Renderer (renderTemplate) where
 
 import Control.Monad
@@ -60,6 +61,7 @@ mkDiagramContext fp (Diagram attrs _ flows) =
   ctx "flows" = MuList $ zipWith mkFlowContext flows [1..]
   ctx _ = MuNothing
 
+-- | Render the given template string and 'Diagram' file path.
 renderTemplate :: String -> FilePath -> Diagram -> IO TL.Text
 renderTemplate tmpl fp d =
   hastacheStr defaultConfig (encodeStr tmpl) (mkDiagramContext fp d)

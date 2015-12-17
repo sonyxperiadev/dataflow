@@ -1,3 +1,4 @@
+-- Renders 'Diagram' as JSON.
 module DataFlow.JSONGraphFormat.Renderer (convertDiagram, renderJSONGraph) where
 
 import qualified Data.Aeson               as A
@@ -58,5 +59,6 @@ convertDiagram (Diagram attrs rootNodes flows) =
       graph = JG.Graph nodes edges `withLabelAndMetadataFrom` convertAttrs attrs
   in JG.SingleGraph graph
 
+-- Render the 'Diagram' as a JSON 'ByteString'.
 renderJSONGraph :: Diagram -> ByteString
 renderJSONGraph = A.encode . convertDiagram

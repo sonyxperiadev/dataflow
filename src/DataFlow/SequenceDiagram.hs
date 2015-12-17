@@ -1,4 +1,4 @@
-module DataFlow.SequenceDiagram where
+module DataFlow.SequenceDiagram (asSequenceDiagram) where
 
 import qualified Data.Map as M
 import Data.List.Utils

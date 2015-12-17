@@ -1,3 +1,4 @@
+-- TODO: Should write some tests for this module.
 module DataFlow.Graphviz.EdgeNormalization (normalize) where
 
 import DataFlow.Graphviz
@@ -46,5 +47,33 @@ normalize' (Digraph id' stmts) = do
   s <- mapM normalizeStmt stmts
   return $ Digraph id' s
 
+-- | Normalizes all edges between nodes to have the same declaration order and
+-- to use the @dir@ attribute for occurrences of opposite edge direction
+-- between nodes. This is done to avoid the problem in Graphviz described
+-- here at http://stackoverflow.com/questions/1510784/right-to-left-edges-in-dot-graphviz.
+--
+-- __Example:__
+--
+-- @
+-- a -> b;
+-- b -> a;
+--
+-- c -> d;
+-- c <- d;
+--
+-- e <- f;
+-- @
+--
+-- gets converted to:
+--
+-- @
+-- a -> b;
+-- a -> b [dir="back"];
+--
+-- c -> d;
+-- c -> d [dir="back"];
+--
+-- f -> e;
+-- @
 normalize :: Graph -> Graph
 normalize g = evalState (normalize' g) Set.empty

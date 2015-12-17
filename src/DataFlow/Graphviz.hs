@@ -1,11 +1,15 @@
--- | DataFlow.Graphviz provides a model corresponding to the Graphviz language
---   described at http://www.graphviz.org/content/dot-language. All features
---   in the grammar are not supported.
+-- | "DataFlow.Graphviz" provides a model corresponding to the Graphviz language
+--   described at http://www.graphviz.org/content/dot-language.
+--
+--   __All features in the grammar are not supported__. If you are looking for
+--   a complete set of bindings to Graphviz you should have a look at
+--   http://projects.haskell.org/graphviz/index.html.
 module DataFlow.Graphviz where
 
 type ID = String
 
 data Attr = Attr ID ID deriving (Show, Eq)
+
 type AttrList = [Attr]
 
 data Compass = N | NE | E | SE | S | SW | W | NW | C deriving (Show, Eq, Ord)
@@ -33,5 +37,4 @@ data Stmt = NodeStmt ID AttrList
 
 type StmtList = [Stmt]
 
--- TODO: Support undirected graph
 data Graph = Digraph ID StmtList deriving (Show, Eq)

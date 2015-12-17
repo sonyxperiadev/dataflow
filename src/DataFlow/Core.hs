@@ -38,11 +38,11 @@ data RootNode =
               deriving (Eq, Show)
 
 data Node =
-            -- | A "Input" or "Output" in DFD.
+            -- | An /Input/ or /Output/ in DFD.
             InputOutput ID Attributes
-            -- | A \"Function\" in DFD.
+            -- | A /Function/ in DFD.
             | Function ID Attributes
-            -- | A \"Database\" in DFD.
+            -- | A /Database/ in DFD.
             | Database ID Attributes
             deriving (Show, Eq)
 

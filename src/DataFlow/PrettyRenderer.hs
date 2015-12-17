@@ -1,3 +1,4 @@
+-- | Common functionality for rendering pretty output.
 module DataFlow.PrettyRenderer where
 
 import Control.Monad.State
