@@ -3,6 +3,7 @@ module Main where
 
 import Development.GitRev
 import qualified Data.ByteString.Lazy.Char8 as BC
+import qualified Data.Text.IO as T
 import qualified Data.Text.Lazy.IO as TL
 import System.IO
 import System.Environment
@@ -15,7 +16,7 @@ import qualified DataFlow.DFD as DFD
 import qualified DataFlow.SequenceDiagram as SEQ
 import qualified DataFlow.Graphviz.Renderer as GVR
 import qualified DataFlow.PlantUML.Renderer as PUR
-import qualified DataFlow.Hastache.Renderer as HR
+import qualified DataFlow.Mustache.Renderer as MR
 import qualified DataFlow.JSONGraphFormat.Renderer as JG
 
 usage :: IO ()
@@ -67,7 +68,7 @@ template tmplPath path = do
   tmplStr <- readFile tmplPath
   case res of
     (Left err) -> putStrLn err
-    (Right d) -> HR.renderTemplate tmplStr path d >>= TL.putStr
+    (Right d) -> either print T.putStr $ MR.renderTemplate tmplStr path d
 
 json :: FilePath -> IO ()
 json path = do
