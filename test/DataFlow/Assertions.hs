@@ -1,12 +1,12 @@
 module DataFlow.Assertions where
 
-import Control.Monad (when)
-import Test.Hspec
-import Text.ParserCombinators.Parsec
-import Text.Printf
+import           Control.Monad                 (when)
+import           Test.Hspec
+import           Text.ParserCombinators.Parsec
+import           Text.Printf
 
-import DataFlow.Core
-import DataFlow.Reader
+import           DataFlow.Core
+import           DataFlow.Reader               (document)
 
 parseFailure :: (Show a, Show e) => String -> a -> e -> Expectation
 parseFailure input expected err =

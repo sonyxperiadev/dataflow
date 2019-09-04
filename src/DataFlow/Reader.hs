@@ -1,18 +1,19 @@
 -- | Reads .flow syntax.
 module DataFlow.Reader (
-    readDiagram,
-    readDiagramFile
+  document,
+  readDiagram,
+  readDiagramFile
 ) where
 
-import Control.Monad
-import Data.Functor ((<$>))
-import Control.Applicative ((<*>), (<*), (*>))
-import Data.Char
-import Data.List
-import qualified Data.Map as M
-import Text.ParserCombinators.Parsec
+import           Control.Applicative           ((*>), (<*), (<*>))
+import           Control.Monad
+import           Data.Char
+import           Data.Functor                  ((<$>))
+import           Data.List
+import qualified Data.Map                      as M
+import           Text.ParserCombinators.Parsec
 
-import DataFlow.Core
+import           DataFlow.Core
 
 commentsAndSpace :: Parser ()
 commentsAndSpace = do
@@ -116,7 +117,7 @@ arrow = do
   case s of
     "->" -> return Forward
     "<-" -> return Back
-    _ -> fail "Invalid flow statement"
+    _    -> fail "Invalid flow statement"
 
 flow :: Parser Flow
 flow = do
@@ -127,7 +128,7 @@ flow = do
   i2 <- identifier
   a <- option M.empty $ try (inBraces attrs)
   case arr of
-    Back -> return $ Flow i2 i1 a
+    Back    -> return $ Flow i2 i1 a
     Forward -> return $ Flow i1 i2 a
 
 node :: Parser Node
