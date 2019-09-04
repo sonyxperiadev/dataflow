@@ -265,8 +265,7 @@ dataflow seq webapp.flow | java -Djava.awt.headless=true -jar plantuml.jar -tpng
 
 ## Templating
 
-You can use [Hastache](https://github.com/lymar/hastache) to output arbitrary
-text with its Mustache-like templates.
+You can use [Mustache](https://mustache.github.io/) to output arbitrary text.
 
 ```bash
 dataflow template template.ha webapp.flow > webapp.html

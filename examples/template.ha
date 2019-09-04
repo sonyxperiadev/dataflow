@@ -32,7 +32,7 @@
 
     <ul>
     {{#data}}
-      <li>{{value}}</li>
+      <li>{{&value}}</li>
     {{/data}}
     </ul>
 
